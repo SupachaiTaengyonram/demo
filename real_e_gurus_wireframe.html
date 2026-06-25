@@ -1,0 +1,1743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>REAL E GURUS — Wireframe Demo</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; color: #111; background: #f0f0f0; }
+
+  /* ─ VIEW SWITCHER ── */
+  .view-switcher { position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 6px; }
+  .vsw-btn { padding: 8px 14px; border: 1.5px solid #111; background: #fff; font-size: 12px; font-weight: 600; cursor: pointer; border-radius: 4px; text-align: left; white-space: nowrap; }
+  .vsw-btn.active { background: #111; color: #fff; }
+  .vsw-label { font-size: 10px; color: #555; text-align: center; letter-spacing: .5px; text-transform: uppercase; }
+
+  /* ── VIEW PANELS ── */
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* ═══════════════════════════════
+     PUBLIC SITE
+  ═══════════════════════════════ */
+  .site-frame { background: #fff; max-width: 1100px; margin: 20px auto; border: 1px solid #bbb; }
+
+  /* Utility bar */
+  .util-bar { background: #111; color: #fff; padding: 6px 24px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; }
+  .util-bar a { color: #ddd; text-decoration: none; margin-left: 14px; }
+  .util-bar .social-icons { display: flex; gap: 10px; align-items: center; margin-left: 20px; }
+  .social-box { width: 22px; height: 22px; border: 1px solid #666; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #bbb; }
+
+  /* Logo + Nav */
+  .nav-bar { border-bottom: 2px solid #111; display: flex; align-items: stretch; padding: 0 24px; position: relative; }
+  .logo { padding: 14px 0; margin-right: 32px; }
+  .logo-text { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; line-height: 1; }
+  .logo-sub { font-size: 9px; letter-spacing: 3px; color: #555; text-transform: uppercase; }
+
+  .nav-tabs { display: flex; }
+  .nav-tab { position: relative; padding: 18px 16px; font-size: 13px; font-weight: 600; cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; }
+  .nav-tab:hover { border-bottom-color: #111; }
+  .nav-tab:hover .mega-menu { display: flex; }
+
+  /* Mega menu */
+  .mega-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: -24px;
+    background: #fff;
+    border: 1.5px solid #111;
+    border-top: 3px solid #111;
+    width: 620px;
+    padding: 20px 24px;
+    gap: 32px;
+    z-index: 100;
+    box-shadow: 4px 4px 0 #ddd;
+  }
+  .mega-col { min-width: 160px; }
+  .mega-col h4 { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: #888; border-bottom: 1px solid #ddd; padding-bottom: 6px; margin-bottom: 10px; }
+  .mega-col a { display: block; font-size: 12px; color: #222; text-decoration: none; padding: 4px 0; border-left: 2px solid transparent; padding-left: 8px; }
+  .mega-col a:hover { border-left-color: #111; color: #000; font-weight: 600; }
+  .mega-cta { margin-top: 12px; padding: 8px 14px; border: 1.5px solid #111; font-size: 11px; font-weight: 700; text-align: center; cursor: pointer; }
+  .mega-wide { width: 720px; }
+
+  /* Hero */
+  .hero { background: #e8e8e8; border-bottom: 2px solid #111; padding: 60px 32px 40px; }
+  .hero-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: #666; margin-bottom: 10px; }
+  .hero h1 { font-size: 36px; font-weight: 800; line-height: 1.1; max-width: 540px; margin-bottom: 6px; }
+  .hero-sub { font-size: 15px; color: #444; margin-bottom: 28px; }
+
+  .search-box { background: #fff; border: 1.5px solid #111; max-width: 680px; }
+  .search-tabs { display: flex; border-bottom: 1.5px solid #111; }
+  .stab { padding: 10px 20px; font-size: 12px; font-weight: 700; cursor: pointer; border-right: 1px solid #ddd; }
+  .stab.active { background: #111; color: #fff; }
+  .search-row { display: flex; align-items: center; padding: 12px 16px; gap: 10px; }
+  .search-field { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+  .search-field label { font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: 1px; }
+  .search-field .sf-box { border: 1px solid #ccc; padding: 8px 10px; font-size: 12px; color: #555; }
+  .search-divider { width: 1px; background: #ddd; height: 40px; }
+  .search-btn { background: #111; color: #fff; border: none; padding: 14px 22px; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+
+  /* Sections */
+  .section { padding: 36px 32px; border-bottom: 1px solid #ddd; }
+  .section-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 20px; }
+  .section-title { font-size: 18px; font-weight: 800; }
+  .section-link { font-size: 12px; color: #555; text-decoration: underline; cursor: pointer; }
+
+  /* Property cards */
+  .card-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .prop-card { border: 1px solid #ccc; }
+  .card-img { background: #d5d5d5; height: 120px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #888; letter-spacing: 1px; position: relative; }
+  .card-badge { position: absolute; top: 8px; left: 8px; background: #111; color: #fff; font-size: 9px; font-weight: 700; padding: 3px 7px; letter-spacing: 1px; }
+  .card-fav { position: absolute; top: 8px; right: 8px; width: 24px; height: 24px; border: 1px solid #888; background: rgba(255,255,255,0.8); display: flex; align-items: center; justify-content: center; font-size: 14px; color: #555; }
+  .card-body { padding: 10px 12px; }
+  .card-price { font-size: 15px; font-weight: 800; margin-bottom: 4px; }
+  .card-title { font-size: 11px; color: #444; margin-bottom: 6px; line-height: 1.3; }
+  .card-meta { display: flex; gap: 10px; font-size: 10px; color: #777; border-top: 1px solid #eee; padding-top: 6px; margin-top: 6px; }
+
+  /* Type icons grid */
+  .type-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+  .type-item { border: 1px solid #ccc; padding: 16px 8px; text-align: center; cursor: pointer; }
+  .type-item:hover { border-color: #111; background: #f8f8f8; }
+  .type-icon { font-size: 24px; margin-bottom: 8px; }
+  .type-label { font-size: 11px; font-weight: 600; }
+
+  /* Trust strip */
+  .trust-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: #ccc; }
+  .trust-item { background: #fff; padding: 20px 24px; }
+  .trust-num { font-size: 28px; font-weight: 800; margin-bottom: 4px; }
+  .trust-label { font-size: 12px; color: #555; }
+
+  /* Portal strip */
+  .portal-strip { display: flex; gap: 20px; align-items: center; justify-content: center; padding: 20px; }
+  .portal-badge { border: 1px solid #bbb; padding: 8px 20px; font-size: 12px; font-weight: 700; color: #555; }
+
+  /* Footer */
+  .site-footer { background: #111; color: #ccc; padding: 36px 32px 20px; }
+  .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 32px; margin-bottom: 28px; }
+  .footer-logo { font-size: 16px; font-weight: 800; color: #fff; margin-bottom: 8px; }
+  .footer-tagline { font-size: 11px; color: #888; margin-bottom: 12px; line-height: 1.5; }
+  .footer-social { display: flex; gap: 8px; margin-top: 12px; }
+  .fsoc { width: 28px; height: 28px; border: 1px solid #555; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #bbb; }
+  .footer-col h5 { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: #888; margin-bottom: 12px; border-bottom: 1px solid #333; padding-bottom: 6px; }
+  .footer-col a { display: block; font-size: 11px; color: #aaa; text-decoration: none; margin-bottom: 6px; }
+  .footer-bottom { border-top: 1px solid #333; padding-top: 16px; display: flex; justify-content: space-between; font-size: 11px; color: #666; }
+
+  /* ═══════════════════════════════
+     ADMIN PANEL
+  ═══════════════════════════════ */
+  .admin-frame { display: flex; height: 100vh; max-height: 860px; border: 1px solid #bbb; max-width: 1100px; margin: 20px auto; background: #fff; }
+
+  .admin-sidebar { width: 200px; background: #111; color: #fff; flex-shrink: 0; display: flex; flex-direction: column; }
+  .sidebar-brand { padding: 18px 16px 14px; border-bottom: 1px solid #333; }
+  .sidebar-brand .brand-name { font-size: 13px; font-weight: 800; color: #fff; line-height: 1; }
+  .sidebar-brand .brand-sub { font-size: 9px; color: #888; letter-spacing: 2px; text-transform: uppercase; margin-top: 2px; }
+  .sidebar-brand .brand-badge { display: inline-block; margin-top: 6px; font-size: 9px; background: #333; color: #aaa; padding: 2px 7px; border-radius: 2px; }
+
+  .sidebar-nav { padding: 12px 0; flex: 1; }
+  .snav-item { display: flex; align-items: center; gap: 10px; padding: 10px 16px; font-size: 12px; color: #aaa; cursor: pointer; border-left: 3px solid transparent; }
+  .snav-item:hover, .snav-item.active { background: #222; color: #fff; border-left-color: #fff; }
+  .snav-item .sicon { font-size: 15px; width: 18px; text-align: center; }
+  .snav-badge { margin-left: auto; background: #444; color: #aaa; font-size: 9px; padding: 1px 6px; border-radius: 10px; }
+
+  .admin-main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
+  .admin-topbar { border-bottom: 1px solid #ddd; padding: 12px 24px; display: flex; align-items: center; justify-content: space-between; background: #fff; flex-shrink: 0; }
+  .admin-topbar .page-title { font-size: 16px; font-weight: 800; }
+  .admin-topbar .topbar-right { display: flex; align-items: center; gap: 14px; font-size: 12px; color: #555; }
+  .notif-dot { position: relative; }
+  .notif-badge { position: absolute; top: -4px; right: -6px; width: 14px; height: 14px; background: #111; color: #fff; border-radius: 50%; font-size: 8px; display: flex; align-items: center; justify-content: center; }
+  .admin-content { padding: 24px; flex: 1; }
+
+  /* KPI cards */
+  .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+  .kpi-card { border: 1px solid #ddd; padding: 16px; }
+  .kpi-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: #888; margin-bottom: 6px; }
+  .kpi-value { font-size: 28px; font-weight: 800; line-height: 1; margin-bottom: 4px; }
+  .kpi-change { font-size: 11px; color: #555; }
+  .kpi-change.up::before { content: '↑ '; }
+  .kpi-change.down::before { content: '↓ '; color: #999; }
+
+  /* Chart placeholders */
+  .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+  .chart-box { border: 1px solid #ddd; padding: 16px; }
+  .chart-box h4 { font-size: 12px; font-weight: 700; margin-bottom: 14px; color: #333; }
+  .chart-placeholder { background: #f5f5f5; border: 1px dashed #ccc; height: 160px; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 8px; color: #aaa; font-size: 11px; }
+  .bar-chart-mock { display: flex; align-items: flex-end; gap: 8px; height: 120px; padding: 0 8px; }
+  .bar { flex: 1; background: #ddd; border-top: 2px solid #aaa; }
+  .activity-list { display: flex; flex-direction: column; gap: 0; }
+  .act-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid #f0f0f0; font-size: 11px; color: #555; }
+  .act-dot { width: 6px; height: 6px; background: #aaa; border-radius: 50%; flex-shrink: 0; }
+  .act-time { margin-left: auto; color: #bbb; font-size: 10px; }
+
+  /* Quick actions */
+  .quick-actions { display: flex; gap: 10px; margin-bottom: 24px; }
+  .qa-btn { padding: 8px 16px; border: 1.5px solid #111; background: #fff; font-size: 11px; font-weight: 700; cursor: pointer; }
+  .qa-btn.primary { background: #111; color: #fff; }
+
+  /* ── LISTINGS PAGE ── */
+  .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+  .page-header h2 { font-size: 16px; font-weight: 800; }
+  .filter-bar { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+  .filter-bar input[type=text] { flex: 1; min-width: 180px; border: 1px solid #ccc; padding: 7px 10px; font-size: 12px; }
+  .flt-select { border: 1px solid #ccc; padding: 7px 10px; font-size: 12px; color: #555; background: #fff; }
+  .data-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .data-table th { background: #f5f5f5; border: 1px solid #ddd; padding: 8px 10px; text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: .8px; color: #666; font-weight: 700; }
+  .data-table td { border: 1px solid #eee; padding: 9px 10px; vertical-align: middle; }
+  .data-table tr:hover td { background: #fafafa; }
+  .status-badge { display: inline-block; padding: 2px 8px; font-size: 10px; font-weight: 700; border: 1px solid; }
+  .s-sale { border-color: #111; color: #111; }
+  .s-rent { border-color: #555; color: #555; background: #f5f5f5; }
+  .s-sold { border-color: #aaa; color: #888; background: #f9f9f9; text-decoration: line-through; }
+  .s-pend { border-color: #999; color: #999; background: #f9f9f9; border-style: dashed; }
+  .action-btn { border: 1px solid #ccc; background: #fff; padding: 3px 8px; font-size: 11px; cursor: pointer; margin-right: 4px; }
+  .action-btn:hover { border-color: #111; }
+  .bulk-bar { background: #f5f5f5; border: 1px solid #ddd; padding: 8px 12px; display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 12px; }
+  .pagination { display: flex; align-items: center; gap: 6px; margin-top: 14px; font-size: 11px; }
+  .pg-btn { border: 1px solid #ccc; padding: 4px 10px; cursor: pointer; background: #fff; }
+  .pg-btn.active { background: #111; color: #fff; border-color: #111; }
+
+  /* ── ADD LISTING FORM ── */
+  .form-tabs { display: flex; border-bottom: 2px solid #111; margin-bottom: 20px; }
+  .ftab { padding: 10px 18px; font-size: 12px; font-weight: 600; cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -2px; }
+  .ftab.active { border-bottom-color: #111; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .form-group { display: flex; flex-direction: column; gap: 5px; }
+  .form-group.full { grid-column: 1 / -1; }
+  .form-group label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: #666; font-weight: 700; }
+  .form-group input, .form-group select, .form-group textarea { border: 1px solid #ccc; padding: 8px 10px; font-size: 13px; }
+  .form-group textarea { min-height: 80px; resize: vertical; }
+  .form-actions { display: flex; gap: 10px; margin-top: 24px; }
+  .btn-primary { background: #111; color: #fff; border: none; padding: 10px 20px; font-size: 13px; font-weight: 700; cursor: pointer; }
+  .btn-secondary { background: #fff; color: #111; border: 1.5px solid #111; padding: 10px 20px; font-size: 13px; font-weight: 700; cursor: pointer; }
+  .btn-ghost { background: #fff; color: #555; border: 1px solid #ccc; padding: 10px 20px; font-size: 13px; cursor: pointer; }
+  .photo-drop { border: 2px dashed #bbb; padding: 32px; text-align: center; color: #aaa; font-size: 12px; margin-top: 8px; }
+  .photo-thumbs { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+  .photo-thumb { width: 70px; height: 55px; background: #e0e0e0; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center; font-size: 9px; color: #aaa; }
+  .map-placeholder { background: #e8e8e8; border: 1px dashed #bbb; height: 160px; display: flex; align-items: center; justify-content: center; color: #aaa; font-size: 12px; margin-top: 8px; }
+
+  /* ── USERS PAGE ── */
+  .role-legend { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+  .role-pill { padding: 4px 12px; border: 1px solid #aaa; font-size: 11px; font-weight: 600; }
+  .r-super { border-color: #111; background: #111; color: #fff; }
+  .r-mgr { border-color: #555; background: #555; color: #fff; }
+  .r-agent { border-color: #777; background: #f0f0f0; color: #333; }
+  .r-editor { border-color: #bbb; background: #f8f8f8; color: #555; }
+  .r-customer { border-color: #ddd; background: #fff; color: #999; }
+
+  .permissions-table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 16px; }
+  .permissions-table th { background: #111; color: #fff; padding: 8px 10px; text-align: center; font-size: 10px; }
+  .permissions-table th:first-child { text-align: left; }
+  .permissions-table td { border: 1px solid #eee; padding: 7px 10px; text-align: center; }
+  .permissions-table td:first-child { text-align: left; font-weight: 600; color: #333; }
+  .permissions-table tr:hover td { background: #fafafa; }
+  .perm-yes { color: #111; font-weight: 800; }
+  .perm-no { color: #ddd; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     VIEW SWITCHER (fixed)
+══════════════════════════════════════ -->
+<div class="view-switcher">
+  <div class="vsw-label">Switch View</div>
+  <button class="vsw-btn active" onclick="showView('home')">Public — Home</button>
+  <button class="vsw-btn" onclick="showView('buy')">Public — For Sale</button>
+  <button class="vsw-btn" onclick="showView('sold')">Public — Recently Sold</button>
+  <button class="vsw-btn" onclick="showView('commercial')">Public — Commercial</button>
+  <button class="vsw-btn" onclick="showView('detail')">Public — Property Detail</button>
+  <button class="vsw-btn" onclick="showView('about')">Public — About</button>
+  <button class="vsw-btn" onclick="showView('contact')">Public — Contact</button>
+  <button class="vsw-btn" onclick="showView('admin-dash')">Admin — Dashboard</button>
+  <button class="vsw-btn" onclick="showView('admin-listings')">Admin — Listings</button>
+  <button class="vsw-btn" onclick="showView('admin-add')">Admin — Add Listing</button>
+  <button class="vsw-btn" onclick="showView('admin-users')">Admin — Users & Roles</button>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     VIEW 1: PUBLIC HOME
+══════════════════════════════════════ -->
+<div class="view active" id="view-home">
+<div class="site-frame">
+
+  <!-- UTILITY BAR -->
+  <div class="util-bar">
+    <div style="display:flex;align-items:center;gap:6px;font-size:11px;">
+      <span>(+66) 045-252550 &nbsp;|&nbsp; 084-9000525</span>
+      &nbsp;&nbsp;
+      <a href="#">sales@realegurus.com</a>
+    </div>
+    <div style="display:flex;align-items:center;gap:4px;">
+      <a href="#">Login</a>
+      <a href="#">Favourites</a>
+      <a href="#">Contact</a>
+      <a href="#">EN / TH</a>
+      <a href="#">Edit Profile</a>
+      <a href="#" style="border:1px solid #555;padding:2px 8px;font-size:11px;">Register</a>
+      <div class="social-icons">
+        <div class="social-box">f</div>
+        <div class="social-box">L</div>
+        <div class="social-box">in</div>
+        <div class="social-box">yt</div>
+        <div class="social-box">ig</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NAV BAR -->
+  <div class="nav-bar">
+    <div class="logo">
+      <div class="logo-text">REAL E GURUS</div>
+      <div class="logo-sub">Ubon Ratchathani · Est. 2014</div>
+    </div>
+
+    <div class="nav-tabs">
+
+      <!-- HOME -->
+      <div class="nav-tab">Home
+        <div class="mega-menu" style="width:320px;">
+          <div class="mega-col">
+            <h4>Company</h4>
+            <a href="#">About Real E Gurus</a>
+            <a href="#">Our Story &amp; Team</a>
+            <a href="#">Why Ubon Ratchathani?</a>
+            <a href="#">Awards &amp; Partners</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- BUY -->
+      <div class="nav-tab">Buy
+        <div class="mega-menu mega-wide">
+          <div class="mega-col">
+            <h4>Property Types</h4>
+            <a href="#">Houses for Sale</a>
+            <a href="#">Land for Sale</a>
+            <a href="#">Luxury Property</a>
+            <a href="#">Commercial</a>
+            <a href="#">Condos &amp; Apartments</a>
+            <div class="mega-cta">Search All For Sale</div>
+          </div>
+          <div class="mega-col">
+            <h4>Buyer Resources</h4>
+            <a href="#">Buying Guide (Thailand)</a>
+            <a href="#">Protect Your Investment</a>
+            <a href="#">Property Taxes Guide</a>
+            <a href="#">Title Deeds Explained</a>
+            <a href="#">Land Measurement</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- RENT -->
+      <div class="nav-tab">Rent
+        <div class="mega-menu mega-wide">
+          <div class="mega-col">
+            <h4>Rental Listings</h4>
+            <a href="#">Houses for Rent</a>
+            <a href="#">Condos for Rent</a>
+            <a href="#">Commercial Rentals</a>
+            <a href="#">Long-term vs Short-term</a>
+            <div class="mega-cta">Search All Rentals</div>
+          </div>
+          <div class="mega-col">
+            <h4>Renter Tools</h4>
+            <a href="#">Rental Price Guide</a>
+            <a href="#">What to Expect (FAQ)</a>
+            <a href="#">Contact an Agent</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- SELL -->
+      <div class="nav-tab">Sell
+        <div class="mega-menu mega-wide">
+          <div class="mega-col">
+            <h4>Selling With Us</h4>
+            <a href="#">List Your Property</a>
+            <a href="#">Free Valuation Request</a>
+            <a href="#">Meet Our Agents</a>
+            <a href="#">Recently Sold Properties</a>
+          </div>
+          <div class="mega-col">
+            <h4>Seller Resources</h4>
+            <a href="#">How to Sell Your Home Fast</a>
+            <a href="#">Seller's Guide Part 2</a>
+            <a href="#">Client References</a>
+            <div class="mega-cta" style="margin-top:14px;">Get Free Valuation</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AGENTS -->
+      <div class="nav-tab">Agents
+        <div class="mega-menu" style="width:260px;">
+          <div class="mega-col">
+            <h4>Our Team</h4>
+            <a href="#">Meet the Team</a>
+            <a href="#">Find an Agent</a>
+            <a href="#">Join Our Team (Careers)</a>
+            <a href="#">Agent Login / Dashboard</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- RESOURCES -->
+      <div class="nav-tab">Resources
+        <div class="mega-menu mega-wide">
+          <div class="mega-col">
+            <h4>Buying in Thailand</h4>
+            <a href="#">Title Deeds Guide</a>
+            <a href="#">Property Taxes</a>
+            <a href="#">Land Measurement</a>
+            <a href="#">Foreigner Ownership FAQ</a>
+            <a href="#">Protect Your Investment</a>
+          </div>
+          <div class="mega-col">
+            <h4>Market Data</h4>
+            <a href="#">Recently Sold Properties</a>
+            <a href="#">Market Trends &amp; News</a>
+            <a href="#">Area Guides</a>
+            <a href="#">Investment Insights</a>
+            <hr style="margin:8px 0;border:none;border-top:1px solid #eee;">
+            <a href="#" style="font-size:11px;color:#aaa;">DDproperty</a>
+            <a href="#" style="font-size:11px;color:#aaa;">FazWaz</a>
+            <a href="#" style="font-size:11px;color:#aaa;">Hipflat</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- NEWS -->
+      <div class="nav-tab">News</div>
+
+      <!-- CONTACT -->
+      <div class="nav-tab">Contact
+        <div class="mega-menu" style="width:260px;">
+          <div class="mega-col">
+            <h4>Get in Touch</h4>
+            <a href="#">Contact Form</a>
+            <a href="#">Office Location &amp; Map</a>
+            <a href="#">Privacy Policy</a>
+            <div class="mega-cta" style="margin-top:10px;background:#111;color:#fff;border-color:#111;">Chat on LINE</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /nav-tabs -->
+  </div><!-- /nav-bar -->
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-label">Ubon Ratchathani's #1 Agency · Est. 2014</div>
+    <h1>Find Your Perfect Property in Ubon</h1>
+    <p class="hero-sub">Buy · Rent · Sell — Trained bilingual agents, English &amp; Thai</p>
+    <div class="search-box">
+      <div class="search-tabs">
+        <div class="stab active">For Sale</div>
+        <div class="stab">For Rent</div>
+        <div class="stab">Sell My Home</div>
+      </div>
+      <div class="search-row">
+        <div class="search-field">
+          <label>Location / Area</label>
+          <div class="sf-box">All areas in Ubon...</div>
+        </div>
+        <div class="search-divider"></div>
+        <div class="search-field">
+          <label>Property Type</label>
+          <div class="sf-box">All types</div>
+        </div>
+        <div class="search-divider"></div>
+        <div class="search-field">
+          <label>Price Range (฿)</label>
+          <div class="sf-box">Min – Max</div>
+        </div>
+        <div class="search-divider"></div>
+        <div class="search-field">
+          <label>Bedrooms</label>
+          <div class="sf-box">Any</div>
+        </div>
+        <button class="search-btn">Search</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROPERTY TYPE ICONS -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">Browse by Property Type</div>
+    </div>
+    <div class="type-grid">
+      <div class="type-item"><div class="type-icon"></div><div class="type-label">Houses</div></div>
+      <div class="type-item"><div class="type-icon"></div><div class="type-label">Commercial</div></div>
+      <div class="type-item"><div class="type-icon"></div><div class="type-label">Land</div></div>
+      <div class="type-item"><div class="type-icon"></div><div class="type-label">Condos</div></div>
+      <div class="type-item"><div class="type-icon"></div><div class="type-label">Luxury</div></div>
+      <div class="type-item"><div class="type-icon"></div><div class="type-label">Rentals</div></div>
+    </div>
+  </div>
+
+  <!-- HOT PROPERTIES -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">Hot Properties — Must See</div>
+      <div class="section-link">View all listings</div>
+    </div>
+    <div class="card-grid">
+      <div class="prop-card">
+        <div class="card-img">[ PHOTO ]<div class="card-badge">FOR SALE</div><div class="card-fav">Fav</div></div>
+        <div class="card-body">
+          <div class="card-price">฿ 3,200,000</div>
+          <div class="card-title">3-Bedroom House, Warin Chamrap</div>
+          <div class="card-meta"><span>3 bed</span><span>2 bath</span><span>180 m²</span></div>
+        </div>
+      </div>
+      <div class="prop-card">
+        <div class="card-img">[ PHOTO ]<div class="card-badge">FOR SALE</div><div class="card-fav">Fav</div></div>
+        <div class="card-body">
+          <div class="card-price">฿ 800,000</div>
+          <div class="card-title">Land 200 Sq.Wa, Mueang District</div>
+          <div class="card-meta"><span>Land</span><span>200 tw.</span></div>
+        </div>
+      </div>
+      <div class="prop-card">
+        <div class="card-img">[ PHOTO ]<div class="card-badge">FOR RENT</div><div class="card-fav">Fav</div></div>
+        <div class="card-body">
+          <div class="card-price">฿ 18,000 / mo</div>
+          <div class="card-title">2-Bedroom Condo, City Centre</div>
+          <div class="card-meta"><span>2 bed</span><span>2 bath</span><span>75 m²</span></div>
+        </div>
+      </div>
+      <div class="prop-card">
+        <div class="card-img">[ PHOTO ]<div class="card-badge">LUXURY</div><div class="card-fav">Fav</div></div>
+        <div class="card-body">
+          <div class="card-price">฿ 25,000,000</div>
+          <div class="card-title">Luxury Villa, Phon Phisai Area</div>
+          <div class="card-meta"><span>5 bed</span><span>4 bath</span><span>480 m²</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TRUST STRIP -->
+  <div class="trust-strip">
+    <div class="trust-item">
+      <div class="trust-num">Est. 2014</div>
+      <div class="trust-label">First professional agency in Ubon Ratchathani</div>
+    </div>
+    <div class="trust-item">
+      <div class="trust-num">EN &amp; TH</div>
+      <div class="trust-label">Fully bilingual team — Thai and international buyers</div>
+    </div>
+    <div class="trust-item">
+      <div class="trust-num">Full Service</div>
+      <div class="trust-label">Buy · Sell · Rent · Valuation · Investment</div>
+    </div>
+  </div>
+
+  <!-- VIDEO TOURS SECTION -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">Property Video Tours</div>
+      <div class="section-link">View YouTube channel</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+      <div style="border:1px solid #ddd;">
+        <div style="background:#e0e0e0;height:110px;display:flex;align-items:center;justify-content:center;font-size:28px;color:#aaa;">Play</div>
+        <div style="padding:10px 12px;font-size:12px;font-weight:600;">3BR House Walkthrough — Warin</div>
+        <div style="padding:0 12px 10px;font-size:11px;color:#888;">4:32 · May 2025</div>
+      </div>
+      <div style="border:1px solid #ddd;">
+        <div style="background:#e0e0e0;height:110px;display:flex;align-items:center;justify-content:center;font-size:28px;color:#aaa;">Play</div>
+        <div style="padding:10px 12px;font-size:12px;font-weight:600;">Land Plot Tour — 2 Rai Mueang</div>
+        <div style="padding:0 12px 10px;font-size:11px;color:#888;">2:18 · Apr 2025</div>
+      </div>
+      <div style="border:1px solid #ddd;">
+        <div style="background:#e0e0e0;height:110px;display:flex;align-items:center;justify-content:center;font-size:28px;color:#aaa;">Play</div>
+        <div style="padding:10px 12px;font-size:12px;font-weight:600;">Luxury Villa Full Tour — Phon Phisai</div>
+        <div style="padding:0 12px 10px;font-size:11px;color:#888;">6:47 · Mar 2025</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PORTAL BADGES -->
+  <div class="portal-strip" style="border-top:1px solid #ddd;border-bottom:1px solid #ddd;">
+    <span style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1px;">Also listed on</span>
+    <div class="portal-badge">DDproperty</div>
+    <div class="portal-badge">FazWaz</div>
+    <div class="portal-badge">Hipflat</div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="site-footer">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo">REAL E GURUS</div>
+        <div class="footer-tagline">Ubon Ratchathani's first professional real estate agency. English owned, Thai registered, fully bilingual team.</div>
+        <div style="font-size:11px;color:#888;">(+66) 045-252550<br>sales@realegurus.com</div>
+        <div class="footer-social">
+          <div class="fsoc">f</div><div class="fsoc">L</div><div class="fsoc">ig</div><div class="fsoc">yt</div><div class="fsoc">in</div>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h5>Properties</h5>
+        <a href="#">For Sale</a><a href="#">For Rent</a><a href="#">Luxury</a><a href="#">Commercial</a><a href="#">Land</a><a href="#">Recently Sold</a>
+      </div>
+      <div class="footer-col">
+        <h5>Resources</h5>
+        <a href="#">Buying Guide</a><a href="#">Sellers Guide</a><a href="#">Title Deeds</a><a href="#">Property Taxes</a><a href="#">Market News</a><a href="#">Links</a>
+      </div>
+      <div class="footer-col">
+        <h5>Company</h5>
+        <a href="#">About Us</a><a href="#">Our Team</a><a href="#">Careers</a><a href="#">Contact</a><a href="#">Privacy Policy</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 Real E Gurus Co., Ltd. All rights reserved.</span>
+      <span>Privacy Policy · Terms · Sitemap</span>
+    </div>
+  </div>
+
+</div>
+</div><!-- /view-home -->
+
+
+<!-- ══════════════════════════════════════
+     VIEW: FOR SALE (TO BUY)
+══════════════════════════════════════ -->
+<div class="view" id="view-buy">
+<div class="site-frame">
+  <!-- UTILITY BAR -->
+  <div class="util-bar">
+    <div style="display:flex;align-items:center;gap:6px;font-size:11px;">
+      <span>(+66) 045-252550 &nbsp;|&nbsp; 084-9000525</span>&nbsp;&nbsp;<a href="#">sales@realegurus.com</a>
+    </div>
+    <div style="display:flex;align-items:center;gap:4px;">
+      <a href="#">Login</a><a href="#">Favourites</a><a href="#">Contact</a><a href="#">EN / TH</a><a href="#">Edit Profile</a><a href="#" style="border:1px solid #555;padding:2px 8px;font-size:11px;">Register</a>
+      <div class="social-icons"><div class="social-box">f</div><div class="social-box">L</div><div class="social-box">in</div><div class="social-box">yt</div><div class="social-box">ig</div></div>
+    </div>
+  </div>
+  <!-- NAV BAR -->
+  <div class="nav-bar">
+    <div class="logo"><div class="logo-text">REAL E GURUS</div><div class="logo-sub">Ubon Ratchathani · Est. 2014</div></div>
+    <div class="nav-tabs">
+      <!-- HOME -->
+      <div class="nav-tab">Home
+        <div class="mega-menu" style="width:320px;"><div class="mega-col"><h4>Company</h4><a href="#">About Real E Gurus</a><a href="#">Our Story &amp; Team</a><a href="#">Why Ubon Ratchathani?</a><a href="#">Awards &amp; Partners</a></div></div>
+      </div>
+      <!-- BUY -->
+      <div class="nav-tab">Buy
+        <div class="mega-menu mega-wide"><div class="mega-col"><h4>Property Types</h4><a href="#">Houses for Sale</a><a href="#">Land for Sale</a><a href="#">Luxury Property</a><a href="#">Commercial</a><a href="#">Condos &amp; Apartments</a><div class="mega-cta">Search All For Sale</div></div><div class="mega-col"><h4>Buyer Resources</h4><a href="#">Buying Guide (Thailand)</a><a href="#">Protect Your Investment</a><a href="#">Property Taxes Guide</a><a href="#">Title Deeds Explained</a><a href="#">Land Measurement</a></div></div>
+      </div>
+      <!-- RENT -->
+      <div class="nav-tab">Rent
+        <div class="mega-menu mega-wide"><div class="mega-col"><h4>Rental Listings</h4><a href="#">Houses for Rent</a><a href="#">Condos for Rent</a><a href="#">Commercial Rentals</a><a href="#">Long-term vs Short-term</a><div class="mega-cta">Search All Rentals</div></div><div class="mega-col"><h4>Renter Tools</h4><a href="#">Rental Price Guide</a><a href="#">What to Expect (FAQ)</a><a href="#">Contact an Agent</a></div></div>
+      </div>
+      <!-- SELL -->
+      <div class="nav-tab">Sell
+        <div class="mega-menu mega-wide"><div class="mega-col"><h4>Selling With Us</h4><a href="#">List Your Property</a><a href="#">Free Valuation Request</a><a href="#">Meet Our Agents</a><a href="#">Recently Sold Properties</a></div><div class="mega-col"><h4>Seller Resources</h4><a href="#">How to Sell Your Home Fast</a><a href="#">Seller's Guide Part 2</a><a href="#">Client References</a><div class="mega-cta" style="margin-top:14px;">Get Free Valuation</div></div></div>
+      </div>
+      <!-- AGENTS -->
+      <div class="nav-tab">Agents
+        <div class="mega-menu" style="width:260px;"><div class="mega-col"><h4>Our Team</h4><a href="#">Meet the Team</a><a href="#">Find an Agent</a><a href="#">Join Our Team (Careers)</a><a href="#">Agent Login / Dashboard</a></div></div>
+      </div>
+      <!-- RESOURCES -->
+      <div class="nav-tab">Resources
+        <div class="mega-menu mega-wide"><div class="mega-col"><h4>Buying in Thailand</h4><a href="#">Title Deeds Guide</a><a href="#">Property Taxes</a><a href="#">Land Measurement</a><a href="#">Foreigner Ownership FAQ</a><a href="#">Protect Your Investment</a></div><div class="mega-col"><h4>Market Data</h4><a href="#">Recently Sold Properties</a><a href="#">Market Trends &amp; News</a><a href="#">Area Guides</a><a href="#">Investment Insights</a><hr style="margin:8px 0;border:none;border-top:1px solid #eee;"><a href="#" style="font-size:11px;color:#aaa;">DDproperty</a><a href="#" style="font-size:11px;color:#aaa;">FazWaz</a><a href="#" style="font-size:11px;color:#aaa;">Hipflat</a></div></div>
+      </div>
+      <!-- NEWS -->
+      <div class="nav-tab">News</div>
+      <!-- CONTACT -->
+      <div class="nav-tab">Contact
+        <div class="mega-menu" style="width:260px;"><div class="mega-col"><h4>Get in Touch</h4><a href="#">Contact Form</a><a href="#">Office Location &amp; Map</a><a href="#">Privacy Policy</a><div class="mega-cta" style="margin-top:10px;background:#111;color:#fff;border-color:#111;">Chat on LINE</div></div></div>
+      </div>
+    </div><!-- /nav-tabs -->
+  </div><!-- /nav-bar -->
+
+  <div class="hero">
+    <div class="hero-label">To Buy</div>
+    <h1>Properties For Sale in Ubon</h1>
+    <div class="search-box" style="margin-top:20px;">
+      <div class="search-row">
+        <div class="search-field"><label>Location / Area</label><div class="sf-box">All areas...</div></div><div class="search-divider"></div>
+        <div class="search-field"><label>Property Type</label><div class="sf-box">All types</div></div><div class="search-divider"></div>
+        <div class="search-field"><label>Price Range (฿)</label><div class="sf-box">Min – Max</div></div>
+        <button class="search-btn">Search</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">Latest Listings</div>
+      <div class="section-link">Sort by: Newest First</div>
+    </div>
+    <div class="card-grid">
+      <div class="prop-card"><div class="card-img">[ PHOTO ]<div class="card-badge">FOR SALE</div></div><div class="card-body"><div class="card-price">฿ 3,200,000</div><div class="card-title">3-Bedroom House, Warin Chamrap</div><div class="card-meta"><span>3 bed</span><span>2 bath</span><span>180 m²</span></div></div></div>
+      <div class="prop-card"><div class="card-img">[ PHOTO ]<div class="card-badge">FOR SALE</div></div><div class="card-body"><div class="card-price">฿ 800,000</div><div class="card-title">Land 200 Sq.Wa, Mueang District</div><div class="card-meta"><span>Land</span><span>200 tw.</span></div></div></div>
+      <div class="prop-card"><div class="card-img">[ PHOTO ]<div class="card-badge">FOR SALE</div></div><div class="card-body"><div class="card-price">฿ 1,850,000</div><div class="card-title">2-Bedroom House, Kut Chap</div><div class="card-meta"><span>2 bed</span><span>1 bath</span><span>120 m²</span></div></div></div>
+      <div class="prop-card"><div class="card-img">[ PHOTO ]<div class="card-badge">LUXURY</div></div><div class="card-body"><div class="card-price">฿ 25,000,000</div><div class="card-title">Luxury Villa, Phon Phisai Area</div><div class="card-meta"><span>5 bed</span><span>4 bath</span><span>480 m²</span></div></div></div>
+      <div class="prop-card"><div class="card-img">[ PHOTO ]<div class="card-badge">FOR SALE</div></div><div class="card-body"><div class="card-price">฿ 1,200,000</div><div class="card-title">Condo 1BR, City Centre</div><div class="card-meta"><span>1 bed</span><span>1 bath</span><span>45 m²</span></div></div></div>
+      <div class="prop-card"><div class="card-img">[ PHOTO ]<div class="card-badge">FOR SALE</div></div><div class="card-body"><div class="card-price">฿ 4,500,000</div><div class="card-title">Commercial Shophouse</div><div class="card-meta"><span>Commercial</span><span>220 m²</span></div></div></div>
+      <div class="prop-card"><div class="card-img">[ PHOTO ]<div class="card-badge">FOR SALE</div></div><div class="card-body"><div class="card-price">฿ 2,100,000</div><div class="card-title">Land 1 Rai, Det Udom</div><div class="card-meta"><span>Land</span><span>1 Rai</span></div></div></div>
+      <div class="prop-card"><div class="card-img">[ PHOTO ]<div class="card-badge">FOR SALE</div></div><div class="card-body"><div class="card-price">฿ 6,300,000</div><div class="card-title">4-Bedroom Pool Villa</div><div class="card-meta"><span>4 bed</span><span>3 bath</span><span>250 m²</span></div></div></div>
+    </div>
+    <div class="pagination" style="justify-content:center; margin-top:30px;">
+      <button class="pg-btn active">1</button><button class="pg-btn">2</button><button class="pg-btn">3</button><span style="color:#aaa;">...</span><button class="pg-btn">Next</button>
+    </div>
+  </div>
+
+  <div class="site-footer"><div class="footer-bottom"><span>© 2025 Real E Gurus Co., Ltd. All rights reserved.</span></div></div>
+</div>
+</div><!-- /view-buy -->
+
+
+<!-- ══════════════════════════════════════
+     VIEW: RECENTLY SOLD
+══════════════════════════════════════ -->
+<div class="view" id="view-sold">
+<div class="site-frame">
+  <!-- UTILITY BAR -->
+  <div class="util-bar">
+    <div style="display:flex;align-items:center;gap:6px;font-size:11px;">
+      <span>(+66) 045-252550 &nbsp;|&nbsp; 084-9000525</span>&nbsp;&nbsp;<a href="#">sales@realegurus.com</a>
+    </div>
+    <div style="display:flex;align-items:center;gap:4px;">
+      <a href="#">Login</a><a href="#">Favourites</a><a href="#">Contact</a><a href="#">EN / TH</a><a href="#">Edit Profile</a><a href="#" style="border:1px solid #555;padding:2px 8px;font-size:11px;">Register</a>
+      <div class="social-icons"><div class="social-box">f</div><div class="social-box">L</div><div class="social-box">in</div><div class="social-box">yt</div><div class="social-box">ig</div></div>
+    </div>
+  </div>
+  <!-- NAV BAR -->
+  <div class="nav-bar">
+    <div class="logo"><div class="logo-text">REAL E GURUS</div><div class="logo-sub">Ubon Ratchathani · Est. 2014</div></div>
+    <div class="nav-tabs">
+      <!-- HOME -->
+      <div class="nav-tab">Home
+        <div class="mega-menu" style="width:320px;"><div class="mega-col"><h4>Company</h4><a href="#">About Real E Gurus</a><a href="#">Our Story &amp; Team</a><a href="#">Why Ubon Ratchathani?</a><a href="#">Awards &amp; Partners</a></div></div>
+      </div>
+      <!-- BUY -->
+      <div class="nav-tab">Buy
+        <div class="mega-menu mega-wide"><div class="mega-col"><h4>Property Types</h4><a href="#">Houses for Sale</a><a href="#">Land for Sale</a><a href="#">Luxury Property</a><a href="#">Commercial</a><a href="#">Condos &amp; Apartments</a><div class="mega-cta">Search All For Sale</div></div><div class="mega-col"><h4>Buyer Resources</h4><a href="#">Buying Guide (Thailand)</a><a href="#">Protect Your Investment</a><a href="#">Property Taxes Guide</a><a href="#">Title Deeds Explained</a><a href="#">Land Measurement</a></div></div>
+      </div>
+      <!-- RENT -->
+      <div class="nav-tab">Rent
+        <div class="mega-menu mega-wide"><div class="mega-col"><h4>Rental Listings</h4><a href="#">Houses for Rent</a><a href="#">Condos for Rent</a><a href="#">Commercial Rentals</a><a href="#">Long-term vs Short-term</a><div class="mega-cta">Search All Rentals</div></div><div class="mega-col"><h4>Renter Tools</h4><a href="#">Rental Price Guide</a><a href="#">What to Expect (FAQ)</a><a href="#">Contact an Agent</a></div></div>
+      </div>
+      <!-- SELL -->
+      <div class="nav-tab">Sell
+        <div class="mega-menu mega-wide"><div class="mega-col"><h4>Selling With Us</h4><a href="#">List Your Property</a><a href="#">Free Valuation Request</a><a href="#">Meet Our Agents</a><a href="#">Recently Sold Properties</a></div><div class="mega-col"><h4>Seller Resources</h4><a href="#">How to Sell Your Home Fast</a><a href="#">Seller's Guide Part 2</a><a href="#">Client References</a><div class="mega-cta" style="margin-top:14px;">Get Free Valuation</div></div></div>
+      </div>
+      <!-- AGENTS -->
+      <div class="nav-tab">Agents
+        <div class="mega-menu" style="width:260px;"><div class="mega-col"><h4>Our Team</h4><a href="#">Meet the Team</a><a href="#">Find an Agent</a><a href="#">Join Our Team (Careers)</a><a href="#">Agent Login / Dashboard</a></div></div>
+      </div>
+      <!-- RESOURCES -->
+      <div class="nav-tab">Resources
+        <div class="mega-menu mega-wide"><div class="mega-col"><h4>Buying in Thailand</h4><a href="#">Title Deeds Guide</a><a href="#">Property Taxes</a><a href="#">Land Measurement</a><a href="#">Foreigner Ownership FAQ</a><a href="#">Protect Your Investment</a></div><div class="mega-col"><h4>Market Data</h4><a href="#">Recently Sold Properties</a><a href="#">Market Trends &amp; News</a><a href="#">Area Guides</a><a href="#">Investment Insights</a><hr style="margin:8px 0;border:none;border-top:1px solid #eee;"><a href="#" style="font-size:11px;color:#aaa;">DDproperty</a><a href="#" style="font-size:11px;color:#aaa;">FazWaz</a><a href="#" style="font-size:11px;color:#aaa;">Hipflat</a></div></div>
+      </div>
+      <!-- NEWS -->
+      <div class="nav-tab">News</div>
+      <!-- CONTACT -->
+      <div class="nav-tab">Contact
+        <div class="mega-menu" style="width:260px;"><div class="mega-col"><h4>Get in Touch</h4><a href="#">Contact Form</a><a href="#">Office Location &amp; Map</a><a href="#">Privacy Policy</a><div class="mega-cta" style="margin-top:10px;background:#111;color:#fff;border-color:#111;">Chat on LINE</div></div></div>
+      </div>
+    </div><!-- /nav-tabs -->
+  </div><!-- /nav-bar -->
+
+  <div class="hero">
+    <div class="hero-label">Market Data</div>
+    <h1>Recently Sold Properties</h1>
+    <p class="hero-sub">Browse properties we've successfully sold in Ubon Ratchathani to understand market trends.</p>
+  </div>
+
+  <div class="section">
+    <div class="card-grid">
+      <div class="prop-card"><div class="card-img">[ PHOTO ]<div class="card-badge" style="background:#888;">SOLD</div></div><div class="card-body"><div class="card-price" style="color:#888;">฿ 1,500,000</div><div class="card-title">Condo 1BR, City Centre</div><div class="card-meta"><span>Sold May 2025</span></div></div></div>
+      <div class="prop-card"><div class="card-img">[ PHOTO ]<div class="card-badge" style="background:#888;">SOLD</div></div><div class="card-body"><div class="card-price" style="color:#888;">฿ 4,100,000</div><div class="card-title">3-Bedroom House, Mueang</div><div class="card-meta"><span>Sold Apr 2025</span></div></div></div>
+      <div class="prop-card"><div class="card-img">[ PHOTO ]<div class="card-badge" style="background:#888;">SOLD</div></div><div class="card-body"><div class="card-price" style="color:#888;">฿ 950,000</div><div class="card-title">Land Plot, Warin Chamrap</div><div class="card-meta"><span>Sold Mar 2025</span></div></div></div>
+      <div class="prop-card"><div class="card-img">[ PHOTO ]<div class="card-badge" style="background:#888;">SOLD</div></div><div class="card-body"><div class="card-price" style="color:#888;">฿ 7,800,000</div><div class="card-title">Commercial Building</div><div class="card-meta"><span>Sold Feb 2025</span></div></div></div>
+    </div>
+  </div>
+
+  <div class="site-footer"><div class="footer-bottom"><span>© 2025 Real E Gurus Co., Ltd. All rights reserved.</span></div></div>
+</div>
+</div><!-- /view-sold -->
+
+
+<!-- ══════════════════════════════════════
+     VIEW: COMMERCIAL
+══════════════════════════════════════ -->
+<div class="view" id="view-commercial">
+<div class="site-frame">
+  <!-- UTILITY BAR -->
+  <div class="util-bar">
+    <div style="display:flex;align-items:center;gap:6px;font-size:11px;">
+      <span>(+66) 045-252550 &nbsp;|&nbsp; 084-9000525</span>&nbsp;&nbsp;<a href="#">sales@realegurus.com</a>
+    </div>
+    <div style="display:flex;align-items:center;gap:4px;">
+      <a href="#">Login</a><a href="#">Favourites</a><a href="#">Contact</a><a href="#">EN / TH</a><a href="#">Edit Profile</a><a href="#" style="border:1px solid #555;padding:2px 8px;font-size:11px;">Register</a>
+      <div class="social-icons"><div class="social-box">f</div><div class="social-box">L</div><div class="social-box">in</div><div class="social-box">yt</div><div class="social-box">ig</div></div>
+    </div>
+  </div>
+  <!-- NAV BAR -->
+  <div class="nav-bar">
+    <div class="logo"><div class="logo-text">REAL E GURUS</div><div class="logo-sub">Ubon Ratchathani · Est. 2014</div></div>
+    <div class="nav-tabs">
+      <!-- HOME -->
+      <div class="nav-tab">Home
+        <div class="mega-menu" style="width:320px;"><div class="mega-col"><h4>Company</h4><a href="#">About Real E Gurus</a><a href="#">Our Story &amp; Team</a><a href="#">Why Ubon Ratchathani?</a><a href="#">Awards &amp; Partners</a></div></div>
+      </div>
+      <!-- BUY -->
+      <div class="nav-tab">Buy
+        <div class="mega-menu mega-wide"><div class="mega-col"><h4>Property Types</h4><a href="#">Houses for Sale</a><a href="#">Land for Sale</a><a href="#">Luxury Property</a><a href="#">Commercial</a><a href="#">Condos &amp; Apartments</a><div class="mega-cta">Search All For Sale</div></div><div class="mega-col"><h4>Buyer Resources</h4><a href="#">Buying Guide (Thailand)</a><a href="#">Protect Your Investment</a><a href="#">Property Taxes Guide</a><a href="#">Title Deeds Explained</a><a href="#">Land Measurement</a></div></div>
+      </div>
+      <!-- RENT -->
+      <div class="nav-tab">Rent
+        <div class="mega-menu mega-wide"><div class="mega-col"><h4>Rental Listings</h4><a href="#">Houses for Rent</a><a href="#">Condos for Rent</a><a href="#">Commercial Rentals</a><a href="#">Long-term vs Short-term</a><div class="mega-cta">Search All Rentals</div></div><div class="mega-col"><h4>Renter Tools</h4><a href="#">Rental Price Guide</a><a href="#">What to Expect (FAQ)</a><a href="#">Contact an Agent</a></div></div>
+      </div>
+      <!-- SELL -->
+      <div class="nav-tab">Sell
+        <div class="mega-menu mega-wide"><div class="mega-col"><h4>Selling With Us</h4><a href="#">List Your Property</a><a href="#">Free Valuation Request</a><a href="#">Meet Our Agents</a><a href="#">Recently Sold Properties</a></div><div class="mega-col"><h4>Seller Resources</h4><a href="#">How to Sell Your Home Fast</a><a href="#">Seller's Guide Part 2</a><a href="#">Client References</a><div class="mega-cta" style="margin-top:14px;">Get Free Valuation</div></div></div>
+      </div>
+      <!-- AGENTS -->
+      <div class="nav-tab">Agents
+        <div class="mega-menu" style="width:260px;"><div class="mega-col"><h4>Our Team</h4><a href="#">Meet the Team</a><a href="#">Find an Agent</a><a href="#">Join Our Team (Careers)</a><a href="#">Agent Login / Dashboard</a></div></div>
+      </div>
+      <!-- RESOURCES -->
+      <div class="nav-tab">Resources
+        <div class="mega-menu mega-wide"><div class="mega-col"><h4>Buying in Thailand</h4><a href="#">Title Deeds Guide</a><a href="#">Property Taxes</a><a href="#">Land Measurement</a><a href="#">Foreigner Ownership FAQ</a><a href="#">Protect Your Investment</a></div><div class="mega-col"><h4>Market Data</h4><a href="#">Recently Sold Properties</a><a href="#">Market Trends &amp; News</a><a href="#">Area Guides</a><a href="#">Investment Insights</a><hr style="margin:8px 0;border:none;border-top:1px solid #eee;"><a href="#" style="font-size:11px;color:#aaa;">DDproperty</a><a href="#" style="font-size:11px;color:#aaa;">FazWaz</a><a href="#" style="font-size:11px;color:#aaa;">Hipflat</a></div></div>
+      </div>
+      <!-- NEWS -->
+      <div class="nav-tab">News</div>
+      <!-- CONTACT -->
+      <div class="nav-tab">Contact
+        <div class="mega-menu" style="width:260px;"><div class="mega-col"><h4>Get in Touch</h4><a href="#">Contact Form</a><a href="#">Office Location &amp; Map</a><a href="#">Privacy Policy</a><div class="mega-cta" style="margin-top:10px;background:#111;color:#fff;border-color:#111;">Chat on LINE</div></div></div>
+      </div>
+    </div><!-- /nav-tabs -->
+  </div><!-- /nav-bar -->
+
+  <div class="hero">
+    <div class="hero-label">Commercial Real Estate</div>
+    <h1>Commercial Properties</h1>
+    <p class="hero-sub">Shophouses, office spaces, warehouses, and business land plots.</p>
+  </div>
+
+  <div class="section">
+    <div class="card-grid">
+      <div class="prop-card"><div class="card-img">[ PHOTO ]<div class="card-badge">FOR RENT</div></div><div class="card-body"><div class="card-price">฿ 8,500 / mo</div><div class="card-title">Shophouse CBD, 4 Storeys</div><div class="card-meta"><span>Commercial</span><span>200 m²</span></div></div></div>
+      <div class="prop-card"><div class="card-img">[ PHOTO ]<div class="card-badge">FOR SALE</div></div><div class="card-body"><div class="card-price">฿ 12,000,000</div><div class="card-title">Warehouse Facility, Warin</div><div class="card-meta"><span>Warehouse</span><span>800 m²</span></div></div></div>
+      <div class="prop-card"><div class="card-img">[ PHOTO ]<div class="card-badge">FOR SALE</div></div><div class="card-body"><div class="card-price">฿ 5,500,000</div><div class="card-title">Double Shophouse Unit</div><div class="card-meta"><span>Commercial</span><span>320 m²</span></div></div></div>
+      <div class="prop-card"><div class="card-img">[ PHOTO ]<div class="card-badge">FOR RENT</div></div><div class="card-body"><div class="card-price">฿ 15,000 / mo</div><div class="card-title">Office Space, City Centre</div><div class="card-meta"><span>Office</span><span>120 m²</span></div></div></div>
+    </div>
+  </div>
+
+  <div class="site-footer"><div class="footer-bottom"><span>© 2025 Real E Gurus Co., Ltd. All rights reserved.</span></div></div>
+</div>
+</div><!-- /view-commercial -->
+
+
+<!-- ══════════════════════════════════════
+     VIEW: PROPERTY DETAIL
+══════════════════════════════════════ -->
+<div class="view" id="view-detail">
+<div class="site-frame">
+  <!-- UTILITY BAR -->
+  <div class="util-bar">
+    <div style="display:flex;align-items:center;gap:6px;font-size:11px;">
+      <span>(+66) 045-252550 &nbsp;|&nbsp; 084-9000525</span>&nbsp;&nbsp;<a href="#">sales@realegurus.com</a>
+    </div>
+    <div style="display:flex;align-items:center;gap:4px;">
+      <a href="#">Login</a><a href="#">Favourites</a><a href="#">Contact</a><a href="#">EN / TH</a><a href="#">Edit Profile</a><a href="#" style="border:1px solid #555;padding:2px 8px;font-size:11px;">Register</a>
+      <div class="social-icons"><div class="social-box">f</div><div class="social-box">L</div><div class="social-box">in</div><div class="social-box">yt</div><div class="social-box">ig</div></div>
+    </div>
+  </div>
+  <!-- NAV BAR -->
+  <div class="nav-bar">
+    <div class="logo"><div class="logo-text">REAL E GURUS</div><div class="logo-sub">Ubon Ratchathani · Est. 2014</div></div>
+    <div class="nav-tabs">
+      <!-- HOME -->
+      <div class="nav-tab">Home
+        <div class="mega-menu" style="width:320px;"><div class="mega-col"><h4>Company</h4><a href="#">About Real E Gurus</a><a href="#">Our Story &amp; Team</a><a href="#">Why Ubon Ratchathani?</a><a href="#">Awards &amp; Partners</a></div></div>
+      </div>
+      <!-- BUY -->
+      <div class="nav-tab">Buy
+        <div class="mega-menu mega-wide"><div class="mega-col"><h4>Property Types</h4><a href="#">Houses for Sale</a><a href="#">Land for Sale</a><a href="#">Luxury Property</a><a href="#">Commercial</a><a href="#">Condos &amp; Apartments</a><div class="mega-cta">Search All For Sale</div></div><div class="mega-col"><h4>Buyer Resources</h4><a href="#">Buying Guide (Thailand)</a><a href="#">Protect Your Investment</a><a href="#">Property Taxes Guide</a><a href="#">Title Deeds Explained</a><a href="#">Land Measurement</a></div></div>
+      </div>
+      <!-- RENT -->
+      <div class="nav-tab">Rent
+        <div class="mega-menu mega-wide"><div class="mega-col"><h4>Rental Listings</h4><a href="#">Houses for Rent</a><a href="#">Condos for Rent</a><a href="#">Commercial Rentals</a><a href="#">Long-term vs Short-term</a><div class="mega-cta">Search All Rentals</div></div><div class="mega-col"><h4>Renter Tools</h4><a href="#">Rental Price Guide</a><a href="#">What to Expect (FAQ)</a><a href="#">Contact an Agent</a></div></div>
+      </div>
+      <!-- SELL -->
+      <div class="nav-tab">Sell
+        <div class="mega-menu mega-wide"><div class="mega-col"><h4>Selling With Us</h4><a href="#">List Your Property</a><a href="#">Free Valuation Request</a><a href="#">Meet Our Agents</a><a href="#">Recently Sold Properties</a></div><div class="mega-col"><h4>Seller Resources</h4><a href="#">How to Sell Your Home Fast</a><a href="#">Seller's Guide Part 2</a><a href="#">Client References</a><div class="mega-cta" style="margin-top:14px;">Get Free Valuation</div></div></div>
+      </div>
+      <!-- AGENTS -->
+      <div class="nav-tab">Agents
+        <div class="mega-menu" style="width:260px;"><div class="mega-col"><h4>Our Team</h4><a href="#">Meet the Team</a><a href="#">Find an Agent</a><a href="#">Join Our Team (Careers)</a><a href="#">Agent Login / Dashboard</a></div></div>
+      </div>
+      <!-- RESOURCES -->
+      <div class="nav-tab">Resources
+        <div class="mega-menu mega-wide"><div class="mega-col"><h4>Buying in Thailand</h4><a href="#">Title Deeds Guide</a><a href="#">Property Taxes</a><a href="#">Land Measurement</a><a href="#">Foreigner Ownership FAQ</a><a href="#">Protect Your Investment</a></div><div class="mega-col"><h4>Market Data</h4><a href="#">Recently Sold Properties</a><a href="#">Market Trends &amp; News</a><a href="#">Area Guides</a><a href="#">Investment Insights</a><hr style="margin:8px 0;border:none;border-top:1px solid #eee;"><a href="#" style="font-size:11px;color:#aaa;">DDproperty</a><a href="#" style="font-size:11px;color:#aaa;">FazWaz</a><a href="#" style="font-size:11px;color:#aaa;">Hipflat</a></div></div>
+      </div>
+      <!-- NEWS -->
+      <div class="nav-tab">News</div>
+      <!-- CONTACT -->
+      <div class="nav-tab">Contact
+        <div class="mega-menu" style="width:260px;"><div class="mega-col"><h4>Get in Touch</h4><a href="#">Contact Form</a><a href="#">Office Location &amp; Map</a><a href="#">Privacy Policy</a><div class="mega-cta" style="margin-top:10px;background:#111;color:#fff;border-color:#111;">Chat on LINE</div></div></div>
+      </div>
+    </div><!-- /nav-tabs -->
+  </div><!-- /nav-bar -->
+
+  <div class="section" style="padding-top:20px;">
+    <div style="font-size:11px;color:#888;margin-bottom:16px;">Home / For Sale / Houses / 3-Bedroom House, Warin Chamrap</div>
+    <div class="section-header" style="align-items:flex-end;">
+      <div>
+        <div style="display:inline-block; background:#111; color:#fff; font-size:10px; font-weight:700; padding:4px 10px; margin-bottom:8px;">FOR SALE</div>
+        <h1 style="font-size:28px; font-weight:800; margin-bottom:4px;">3-Bedroom House, Warin Chamrap</h1>
+        <div style="font-size:14px; color:#666;">Amphoe Warin Chamrap, Ubon Ratchathani</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:24px; font-weight:800; color:#111;">฿ 3,200,000</div>
+        <div style="font-size:12px; color:#555; text-decoration:underline; cursor:pointer; margin-top:4px;">Calculate Mortgage</div>
+      </div>
+    </div>
+
+    <!-- Image Gallery Mockup -->
+    <div style="display:flex; gap:10px; margin-bottom:30px;">
+      <div style="flex:2; background:#d5d5d5; height:360px; display:flex; align-items:center; justify-content:center; color:#888; font-size:14px;">[ MAIN PHOTO ]</div>
+      <div style="flex:1; display:flex; flex-direction:column; gap:10px;">
+        <div style="flex:1; background:#d5d5d5; display:flex; align-items:center; justify-content:center; color:#888; font-size:11px;">[ THUMBNAIL 1 ]</div>
+        <div style="flex:1; background:#d5d5d5; display:flex; align-items:center; justify-content:center; color:#888; font-size:11px;">[ THUMBNAIL 2 ]</div>
+        <div style="flex:1; background:#ccc; display:flex; align-items:center; justify-content:center; color:#111; font-size:12px; font-weight:700; cursor:pointer;">+ 12 More Photos</div>
+      </div>
+    </div>
+
+    <!-- Content & Sidebar Grid -->
+    <div style="display:grid; grid-template-columns: 2fr 1fr; gap:32px;">
+      <div>
+        <div style="display:flex; gap:24px; font-size:14px; font-weight:700; padding-bottom:16px; border-bottom:1px solid #ddd; margin-bottom:24px;">
+          <span>3 Bedrooms</span><span>2 Bathrooms</span><span>180 m² Area</span><span>House</span>
+        </div>
+        <h3 style="font-size:16px; font-weight:800; margin-bottom:12px;">Property Description</h3>
+        <p style="font-size:13px; color:#444; line-height:1.6; margin-bottom:16px;">
+          A beautiful 3-bedroom family home located in a quiet neighborhood in Warin Chamrap. This property features a spacious living area, a modern kitchen, and a large garden perfect for outdoor activities. 
+          <br><br>
+          Conveniently situated near local markets, schools, and just a 15-minute drive to Central Plaza Ubon Ratchathani. The house comes partially furnished and includes air conditioning units in all bedrooms.
+        </p>
+        <h3 style="font-size:16px; font-weight:800; margin-bottom:12px; margin-top:32px;">Location</h3>
+        <div class="map-placeholder" style="margin-top:0;">[ GOOGLE MAP EMBED ]</div>
+      </div>
+
+      <!-- Agent Sidebar -->
+      <div>
+        <div style="border:1px solid #ccc; padding:20px; background:#f9f9f9;">
+          <h4 style="font-size:12px; text-transform:uppercase; letter-spacing:1px; color:#888; margin-bottom:16px;">Contact Agent</h4>
+          <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px;">
+            <div style="width:50px; height:50px; background:#ddd; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; color:#888;">[ IMG ]</div>
+            <div>
+              <div style="font-weight:700; font-size:14px;">Somchai Jaidee</div>
+              <div style="font-size:11px; color:#666;">Senior Property Agent</div>
+            </div>
+          </div>
+          <button style="width:100%; padding:12px; background:#111; color:#fff; border:none; font-weight:700; cursor:pointer; margin-bottom:10px;">Enquire Now</button>
+          <button style="width:100%; padding:12px; background:#06C755; color:#fff; border:none; font-weight:700; cursor:pointer;">Chat on LINE</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="site-footer"><div class="footer-bottom"><span>© 2025 Real E Gurus Co., Ltd. All rights reserved.</span></div></div>
+</div>
+</div><!-- /view-detail -->
+
+
+<!-- ══════════════════════════════════════
+     VIEW: ABOUT
+══════════════════════════════════════ -->
+<div class="view" id="view-about">
+<div class="site-frame">
+  <!-- UTILITY BAR -->
+  <div class="util-bar">
+    <div style="display:flex;align-items:center;gap:6px;font-size:11px;">
+      <span>(+66) 045-252550 &nbsp;|&nbsp; 084-9000525</span>&nbsp;&nbsp;<a href="#">sales@realegurus.com</a>
+    </div>
+    <div style="display:flex;align-items:center;gap:4px;">
+      <a href="#">Login</a><a href="#">Favourites</a><a href="#">Contact</a><a href="#">EN / TH</a><a href="#">Edit Profile</a><a href="#" style="border:1px solid #555;padding:2px 8px;font-size:11px;">Register</a>
+      <div class="social-icons"><div class="social-box">f</div><div class="social-box">L</div><div class="social-box">in</div><div class="social-box">yt</div><div class="social-box">ig</div></div>
+    </div>
+  </div>
+  <!-- NAV BAR -->
+  <div class="nav-bar">
+    <div class="logo"><div class="logo-text">REAL E GURUS</div><div class="logo-sub">Ubon Ratchathani · Est. 2014</div></div>
+    <div class="nav-tabs">
+      <!-- HOME -->
+      <div class="nav-tab">Home
+        <div class="mega-menu" style="width:320px;"><div class="mega-col"><h4>Company</h4><a href="#">About Real E Gurus</a><a href="#">Our Story &amp; Team</a><a href="#">Why Ubon Ratchathani?</a><a href="#">Awards &amp; Partners</a></div></div>
+      </div>
+      <!-- BUY -->
+      <div class="nav-tab">Buy
+        <div class="mega-menu mega-wide"><div class="mega-col"><h4>Property Types</h4><a href="#">Houses for Sale</a><a href="#">Land for Sale</a><a href="#">Luxury Property</a><a href="#">Commercial</a><a href="#">Condos &amp; Apartments</a><div class="mega-cta">Search All For Sale</div></div><div class="mega-col"><h4>Buyer Resources</h4><a href="#">Buying Guide (Thailand)</a><a href="#">Protect Your Investment</a><a href="#">Property Taxes Guide</a><a href="#">Title Deeds Explained</a><a href="#">Land Measurement</a></div></div>
+      </div>
+      <!-- RENT -->
+      <div class="nav-tab">Rent
+        <div class="mega-menu mega-wide"><div class="mega-col"><h4>Rental Listings</h4><a href="#">Houses for Rent</a><a href="#">Condos for Rent</a><a href="#">Commercial Rentals</a><a href="#">Long-term vs Short-term</a><div class="mega-cta">Search All Rentals</div></div><div class="mega-col"><h4>Renter Tools</h4><a href="#">Rental Price Guide</a><a href="#">What to Expect (FAQ)</a><a href="#">Contact an Agent</a></div></div>
+      </div>
+      <!-- SELL -->
+      <div class="nav-tab">Sell
+        <div class="mega-menu mega-wide"><div class="mega-col"><h4>Selling With Us</h4><a href="#">List Your Property</a><a href="#">Free Valuation Request</a><a href="#">Meet Our Agents</a><a href="#">Recently Sold Properties</a></div><div class="mega-col"><h4>Seller Resources</h4><a href="#">How to Sell Your Home Fast</a><a href="#">Seller's Guide Part 2</a><a href="#">Client References</a><div class="mega-cta" style="margin-top:14px;">Get Free Valuation</div></div></div>
+      </div>
+      <!-- AGENTS -->
+      <div class="nav-tab">Agents
+        <div class="mega-menu" style="width:260px;"><div class="mega-col"><h4>Our Team</h4><a href="#">Meet the Team</a><a href="#">Find an Agent</a><a href="#">Join Our Team (Careers)</a><a href="#">Agent Login / Dashboard</a></div></div>
+      </div>
+      <!-- RESOURCES -->
+      <div class="nav-tab">Resources
+        <div class="mega-menu mega-wide"><div class="mega-col"><h4>Buying in Thailand</h4><a href="#">Title Deeds Guide</a><a href="#">Property Taxes</a><a href="#">Land Measurement</a><a href="#">Foreigner Ownership FAQ</a><a href="#">Protect Your Investment</a></div><div class="mega-col"><h4>Market Data</h4><a href="#">Recently Sold Properties</a><a href="#">Market Trends &amp; News</a><a href="#">Area Guides</a><a href="#">Investment Insights</a><hr style="margin:8px 0;border:none;border-top:1px solid #eee;"><a href="#" style="font-size:11px;color:#aaa;">DDproperty</a><a href="#" style="font-size:11px;color:#aaa;">FazWaz</a><a href="#" style="font-size:11px;color:#aaa;">Hipflat</a></div></div>
+      </div>
+      <!-- NEWS -->
+      <div class="nav-tab">News</div>
+      <!-- CONTACT -->
+      <div class="nav-tab">Contact
+        <div class="mega-menu" style="width:260px;"><div class="mega-col"><h4>Get in Touch</h4><a href="#">Contact Form</a><a href="#">Office Location &amp; Map</a><a href="#">Privacy Policy</a><div class="mega-cta" style="margin-top:10px;background:#111;color:#fff;border-color:#111;">Chat on LINE</div></div></div>
+      </div>
+    </div><!-- /nav-tabs -->
+  </div><!-- /nav-bar -->
+
+  <div class="hero">
+    <div class="hero-label">Company</div>
+    <h1>About Real E Gurus</h1>
+    <p class="hero-sub">The most trusted and experienced real estate agency in Ubon Ratchathani.</p>
+  </div>
+
+  <div class="trust-strip">
+    <div class="trust-item"><div class="trust-num">Est. 2014</div><div class="trust-label">First professional agency in Ubon Ratchathani</div></div>
+    <div class="trust-item"><div class="trust-num">EN &amp; TH</div><div class="trust-label">Fully bilingual team — Thai and international buyers</div></div>
+    <div class="trust-item"><div class="trust-num">1000+</div><div class="trust-label">Properties successfully sold or rented</div></div>
+  </div>
+
+  <div class="section">
+    <div style="max-width:700px; margin:0 auto; padding:20px 0;">
+      <h3 style="font-size:20px; font-weight:800; margin-bottom:16px;">Our Story</h3>
+      <p style="font-size:14px; color:#444; line-height:1.6; margin-bottom:24px;">
+        Founded in 2014, Real E Gurus was established to bridge the gap in professional real estate services in Ubon Ratchathani. As an English-owned, Thai-registered company, we uniquely cater to both the local Thai market and international clients looking to invest, buy, or rent in the region.
+      </p>
+      <h3 style="font-size:20px; font-weight:800; margin-bottom:16px;">Meet The Team</h3>
+      <div class="type-grid" style="grid-template-columns: repeat(3, 1fr);">
+        <div class="type-item"><div class="type-icon" style="background:#ddd; width:60px; height:60px; border-radius:50%; margin:0 auto 12px; display:flex; align-items:center; justify-content:center; font-size:10px;">[ IMG ]</div><div style="font-weight:700; font-size:13px;">John Smith</div><div style="font-size:11px; color:#666;">Managing Director</div></div>
+        <div class="type-item"><div class="type-icon" style="background:#ddd; width:60px; height:60px; border-radius:50%; margin:0 auto 12px; display:flex; align-items:center; justify-content:center; font-size:10px;">[ IMG ]</div><div style="font-weight:700; font-size:13px;">Somchai Jaidee</div><div style="font-size:11px; color:#666;">Senior Agent</div></div>
+        <div class="type-item"><div class="type-icon" style="background:#ddd; width:60px; height:60px; border-radius:50%; margin:0 auto 12px; display:flex; align-items:center; justify-content:center; font-size:10px;">[ IMG ]</div><div style="font-weight:700; font-size:13px;">Malee Sripan</div><div style="font-size:11px; color:#666;">Sales Manager</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="site-footer"><div class="footer-bottom"><span>© 2025 Real E Gurus Co., Ltd. All rights reserved.</span></div></div>
+</div>
+</div><!-- /view-about -->
+
+
+<!-- ══════════════════════════════════════
+     VIEW: CONTACT
+══════════════════════════════════════ -->
+<div class="view" id="view-contact">
+<div class="site-frame">
+  <!-- UTILITY BAR -->
+  <div class="util-bar">
+    <div style="display:flex;align-items:center;gap:6px;font-size:11px;">
+      <span>(+66) 045-252550 &nbsp;|&nbsp; 084-9000525</span>&nbsp;&nbsp;<a href="#">sales@realegurus.com</a>
+    </div>
+    <div style="display:flex;align-items:center;gap:4px;">
+      <a href="#">Login</a><a href="#">Favourites</a><a href="#">Contact</a><a href="#">EN / TH</a><a href="#">Edit Profile</a><a href="#" style="border:1px solid #555;padding:2px 8px;font-size:11px;">Register</a>
+      <div class="social-icons"><div class="social-box">f</div><div class="social-box">L</div><div class="social-box">in</div><div class="social-box">yt</div><div class="social-box">ig</div></div>
+    </div>
+  </div>
+  <!-- NAV BAR -->
+  <div class="nav-bar">
+    <div class="logo"><div class="logo-text">REAL E GURUS</div><div class="logo-sub">Ubon Ratchathani · Est. 2014</div></div>
+    <div class="nav-tabs">
+      <!-- HOME -->
+      <div class="nav-tab">Home
+        <div class="mega-menu" style="width:320px;"><div class="mega-col"><h4>Company</h4><a href="#">About Real E Gurus</a><a href="#">Our Story &amp; Team</a><a href="#">Why Ubon Ratchathani?</a><a href="#">Awards &amp; Partners</a></div></div>
+      </div>
+      <!-- BUY -->
+      <div class="nav-tab">Buy
+        <div class="mega-menu mega-wide"><div class="mega-col"><h4>Property Types</h4><a href="#">Houses for Sale</a><a href="#">Land for Sale</a><a href="#">Luxury Property</a><a href="#">Commercial</a><a href="#">Condos &amp; Apartments</a><div class="mega-cta">Search All For Sale</div></div><div class="mega-col"><h4>Buyer Resources</h4><a href="#">Buying Guide (Thailand)</a><a href="#">Protect Your Investment</a><a href="#">Property Taxes Guide</a><a href="#">Title Deeds Explained</a><a href="#">Land Measurement</a></div></div>
+      </div>
+      <!-- RENT -->
+      <div class="nav-tab">Rent
+        <div class="mega-menu mega-wide"><div class="mega-col"><h4>Rental Listings</h4><a href="#">Houses for Rent</a><a href="#">Condos for Rent</a><a href="#">Commercial Rentals</a><a href="#">Long-term vs Short-term</a><div class="mega-cta">Search All Rentals</div></div><div class="mega-col"><h4>Renter Tools</h4><a href="#">Rental Price Guide</a><a href="#">What to Expect (FAQ)</a><a href="#">Contact an Agent</a></div></div>
+      </div>
+      <!-- SELL -->
+      <div class="nav-tab">Sell
+        <div class="mega-menu mega-wide"><div class="mega-col"><h4>Selling With Us</h4><a href="#">List Your Property</a><a href="#">Free Valuation Request</a><a href="#">Meet Our Agents</a><a href="#">Recently Sold Properties</a></div><div class="mega-col"><h4>Seller Resources</h4><a href="#">How to Sell Your Home Fast</a><a href="#">Seller's Guide Part 2</a><a href="#">Client References</a><div class="mega-cta" style="margin-top:14px;">Get Free Valuation</div></div></div>
+      </div>
+      <!-- AGENTS -->
+      <div class="nav-tab">Agents
+        <div class="mega-menu" style="width:260px;"><div class="mega-col"><h4>Our Team</h4><a href="#">Meet the Team</a><a href="#">Find an Agent</a><a href="#">Join Our Team (Careers)</a><a href="#">Agent Login / Dashboard</a></div></div>
+      </div>
+      <!-- RESOURCES -->
+      <div class="nav-tab">Resources
+        <div class="mega-menu mega-wide"><div class="mega-col"><h4>Buying in Thailand</h4><a href="#">Title Deeds Guide</a><a href="#">Property Taxes</a><a href="#">Land Measurement</a><a href="#">Foreigner Ownership FAQ</a><a href="#">Protect Your Investment</a></div><div class="mega-col"><h4>Market Data</h4><a href="#">Recently Sold Properties</a><a href="#">Market Trends &amp; News</a><a href="#">Area Guides</a><a href="#">Investment Insights</a><hr style="margin:8px 0;border:none;border-top:1px solid #eee;"><a href="#" style="font-size:11px;color:#aaa;">DDproperty</a><a href="#" style="font-size:11px;color:#aaa;">FazWaz</a><a href="#" style="font-size:11px;color:#aaa;">Hipflat</a></div></div>
+      </div>
+      <!-- NEWS -->
+      <div class="nav-tab">News</div>
+      <!-- CONTACT -->
+      <div class="nav-tab">Contact
+        <div class="mega-menu" style="width:260px;"><div class="mega-col"><h4>Get in Touch</h4><a href="#">Contact Form</a><a href="#">Office Location &amp; Map</a><a href="#">Privacy Policy</a><div class="mega-cta" style="margin-top:10px;background:#111;color:#fff;border-color:#111;">Chat on LINE</div></div></div>
+      </div>
+    </div><!-- /nav-tabs -->
+  </div><!-- /nav-bar -->
+
+  <div class="hero">
+    <div class="hero-label">Get in Touch</div>
+    <h1>Contact Us</h1>
+  </div>
+
+  <div class="section">
+    <div class="form-grid" style="gap:40px;">
+      <!-- Contact Form -->
+      <div>
+        <h3 style="font-size:18px; font-weight:800; margin-bottom:20px;">Send us a message</h3>
+        <div class="form-group" style="margin-bottom:12px;"><label>Your Name</label><input type="text" placeholder="Enter your full name"></div>
+        <div class="form-group" style="margin-bottom:12px;"><label>Email Address</label><input type="text" placeholder="Enter your email"></div>
+        <div class="form-group" style="margin-bottom:12px;"><label>Phone Number</label><input type="text" placeholder="Enter your phone number"></div>
+        <div class="form-group" style="margin-bottom:20px;"><label>Message</label><textarea placeholder="How can we help you?"></textarea></div>
+        <button class="btn-primary" style="width:100%;">Submit Message</button>
+      </div>
+      <!-- Contact Info -->
+      <div>
+        <h3 style="font-size:18px; font-weight:800; margin-bottom:20px;">Our Office</h3>
+        <div style="font-size:13px; color:#444; line-height:1.6; margin-bottom:24px;">
+          <strong>Real E Gurus Co., Ltd.</strong><br>
+          123 Chayangkun Road, Tambon Nai Mueang<br>
+          Amphoe Mueang, Ubon Ratchathani 34000<br>
+          Thailand
+        </div>
+        <div style="font-size:13px; color:#444; line-height:1.6; margin-bottom:24px;">
+          <strong>Phone:</strong> (+66) 045-252550<br>
+          <strong>Mobile:</strong> 084-9000525<br>
+          <strong>Email:</strong> sales@realegurus.com<br>
+          <strong>LINE ID:</strong> @realegurus
+        </div>
+        <div class="map-placeholder" style="height:220px;">[ GOOGLE MAP EMBED - OFFICE LOCATION ]</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="site-footer"><div class="footer-bottom"><span>© 2025 Real E Gurus Co., Ltd. All rights reserved.</span></div></div>
+</div>
+</div><!-- /view-contact -->
+
+
+<!-- ══════════════════════════════════════
+     VIEW 2: ADMIN DASHBOARD
+══════════════════════════════════════ -->
+<div class="view" id="view-admin-dash">
+<div class="admin-frame">
+  <div class="admin-sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-name">REAL E GURUS</div>
+      <div class="brand-sub">Admin Panel</div>
+      <div class="brand-badge">Super Admin</div>
+    </div>
+    <div class="sidebar-nav">
+      <div class="snav-item active"><span class="sicon"></span> Dashboard</div>
+      <div class="snav-item"><span class="sicon"></span> Listings <span class="snav-badge">128</span></div>
+      <div class="snav-item"><span class="sicon"></span> Users <span class="snav-badge">312</span></div>
+    </div>
+  </div>
+  <div class="admin-main">
+    <div class="admin-topbar">
+      <div class="page-title">Dashboard</div>
+      <div class="topbar-right">
+        <div class="notif-dot">Alerts<span class="notif-badge">3</span></div>
+        <span>John Smith</span>
+        <span style="border:1px solid #ddd;padding:4px 10px;cursor:pointer;font-size:11px;">Logout</span>
+      </div>
+    </div>
+    <div class="admin-content">
+
+      <div class="quick-actions">
+        <button class="qa-btn primary">+ Add New Listing</button>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">Total Listings</div>
+          <div class="kpi-value">128</div>
+          <div class="kpi-change up">4 new this week</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Active Rentals</div>
+          <div class="kpi-value">34</div>
+          <div class="kpi-change up">2 new this month</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">New Leads (Month)</div>
+          <div class="kpi-value">47</div>
+          <div class="kpi-change up">+12% vs last month</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Registered Users</div>
+          <div class="kpi-value">312</div>
+          <div class="kpi-change up">8 new this week</div>
+        </div>
+      </div>
+
+      <div class="charts-row">
+        <div class="chart-box">
+          <h4>Listings by Status</h4>
+          <div style="display:flex;align-items:flex-end;gap:6px;height:130px;padding-bottom:20px;position:relative;">
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
+              <span style="font-size:10px;color:#888;">58%</span>
+              <div style="flex:1;width:100%;background:#111;align-self:flex-end;height:75px;"></div>
+              <span style="font-size:9px;color:#666;">For Sale</span>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
+              <span style="font-size:10px;color:#888;">26%</span>
+              <div style="flex:1;width:100%;background:#666;align-self:flex-end;height:34px;"></div>
+              <span style="font-size:9px;color:#666;">For Rent</span>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
+              <span style="font-size:10px;color:#888;">10%</span>
+              <div style="flex:1;width:100%;background:#aaa;align-self:flex-end;height:13px;"></div>
+              <span style="font-size:9px;color:#666;">Sold</span>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
+              <span style="font-size:10px;color:#888;">6%</span>
+              <div style="flex:1;width:100%;background:#ddd;border:1px dashed #bbb;align-self:flex-end;height:8px;"></div>
+              <span style="font-size:9px;color:#666;">Pending</span>
+            </div>
+          </div>
+        </div>
+        <div class="chart-box">
+          <h4>Recent Activity</h4>
+          <div class="activity-list">
+            <div class="act-item"><div class="act-dot"></div>New listing added — 3BR Warin Chamrap<span class="act-time">2m</span></div>
+            <div class="act-item"><div class="act-dot"></div>New user registered — Somchai J.<span class="act-time">5m</span></div>
+            <div class="act-item"><div class="act-dot"></div>Lead from James Wong via website<span class="act-time">12m</span></div>
+            <div class="act-item"><div class="act-dot"></div>Listing #142 edited by Malee<span class="act-time">1h</span></div>
+            <div class="act-item"><div class="act-dot"></div>Listing #89 marked as Sold<span class="act-time">3h</span></div>
+            <div class="act-item"><div class="act-dot"></div>New review submitted — 5 Star<span class="act-time">5h</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="chart-box">
+        <h4>Monthly Leads &amp; Page Views &nbsp; <span style="font-size:11px;font-weight:400;color:#aaa;border:1px solid #ddd;padding:2px 8px;cursor:pointer;">Last 30 days</span></h4>
+        <div style="display:flex;align-items:flex-end;gap:8px;height:100px;margin-top:12px;">
+          <div style="flex:1;background:#ddd;height:40%;"></div>
+          <div style="flex:1;background:#ddd;height:55%;"></div>
+          <div style="flex:1;background:#bbb;height:70%;"></div>
+          <div style="flex:1;background:#bbb;height:60%;"></div>
+          <div style="flex:1;background:#999;height:80%;"></div>
+          <div style="flex:1;background:#888;height:65%;"></div>
+          <div style="flex:1;background:#666;height:90%;"></div>
+          <div style="flex:1;background:#555;height:75%;"></div>
+          <div style="flex:1;background:#444;height:85%;"></div>
+          <div style="flex:1;background:#333;height:95%;"></div>
+          <div style="flex:1;background:#222;height:88%;"></div>
+          <div style="flex:1;background:#111;height:100%;"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:9px;color:#aaa;margin-top:4px;padding:0 4px;">
+          <span>Jun 14</span><span>Jun 17</span><span>Jun 20</span><span>Jun 23</span><span>Jun 25</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     VIEW 3: ADMIN LISTINGS
+══════════════════════════════════════ -->
+<div class="view" id="view-admin-listings">
+<div class="admin-frame">
+  <div class="admin-sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-name">REAL E GURUS</div>
+      <div class="brand-sub">Admin Panel</div>
+      <div class="brand-badge">Super Admin</div>
+    </div>
+    <div class="sidebar-nav">
+      <div class="snav-item"><span class="sicon"></span> Dashboard</div>
+      <div class="snav-item active"><span class="sicon"></span> Listings <span class="snav-badge">128</span></div>
+      <div class="snav-item"><span class="sicon"></span> Users <span class="snav-badge">312</span></div>
+    </div>
+  </div>
+  <div class="admin-main">
+    <div class="admin-topbar">
+      <div class="page-title">Manage Listings</div>
+      <div class="topbar-right">
+        <div class="notif-dot">Alerts<span class="notif-badge">3</span></div>
+        <span>John Smith</span>
+        <span style="border:1px solid #ddd;padding:4px 10px;cursor:pointer;font-size:11px;">Logout</span>
+      </div>
+    </div>
+    <div class="admin-content">
+      <div class="page-header">
+        <h2>All Listings (128)</h2>
+        <button class="btn-primary" style="font-size:12px;padding:8px 16px;">+ Add New Listing</button>
+      </div>
+
+      <div class="filter-bar">
+        <input type="text" placeholder="Search by title, location, agent...">
+        <select class="flt-select"><option>All Status</option><option>For Sale</option><option>For Rent</option><option>Sold</option><option>Pending</option></select>
+        <select class="flt-select"><option>All Types</option><option>House</option><option>Land</option><option>Condo</option><option>Commercial</option><option>Luxury</option></select>
+        <select class="flt-select"><option>All Agents</option><option>Somchai J.</option><option>Malee S.</option><option>David L.</option></select>
+        <select class="flt-select"><option>Date</option><option>Newest First</option><option>Oldest First</option></select>
+      </div>
+
+      <div class="bulk-bar">
+        <input type="checkbox"> &nbsp; Select all on page &nbsp;&nbsp;
+        <select class="flt-select" style="font-size:11px;padding:4px 8px;"><option>Bulk: Change Status</option></select>
+        <select class="flt-select" style="font-size:11px;padding:4px 8px;"><option>Bulk: Assign Agent</option></select>
+        <button class="action-btn" style="color:#999;">Delete Selected</button>
+      </div>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th style="width:30px;"><input type="checkbox"></th>
+            <th>Property</th>
+            <th>Type</th>
+            <th>Price (฿)</th>
+            <th>Agent</th>
+            <th>Status</th>
+            <th>Listed</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td><strong>3BR House, Warin Chamrap</strong><br><span style="color:#999;font-size:10px;">Amphoe Warin Chamrap</span></td>
+            <td>House</td>
+            <td>3,200,000</td>
+            <td>Somchai J.</td>
+            <td><span class="status-badge s-sale">FOR SALE</span></td>
+            <td style="color:#888;font-size:11px;">12 Jun 2025</td>
+            <td><button class="action-btn">Edit</button><button class="action-btn">View</button><button class="action-btn">Delete</button></td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td><strong>Land 200 Sq.Wa, Mueang</strong><br><span style="color:#999;font-size:10px;">Amphoe Mueang</span></td>
+            <td>Land</td>
+            <td>800,000</td>
+            <td>Malee S.</td>
+            <td><span class="status-badge s-sale">FOR SALE</span></td>
+            <td style="color:#888;font-size:11px;">10 Jun 2025</td>
+            <td><button class="action-btn">Edit</button><button class="action-btn">View</button><button class="action-btn">Delete</button></td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td><strong>Shophouse CBD, 4 Storeys</strong><br><span style="color:#999;font-size:10px;">Amphoe Mueang, City Centre</span></td>
+            <td>Commercial</td>
+            <td>8,500 / mo</td>
+            <td>Somchai J.</td>
+            <td><span class="status-badge s-rent">FOR RENT</span></td>
+            <td style="color:#888;font-size:11px;">05 Jun 2025</td>
+            <td><button class="action-btn">Edit</button><button class="action-btn">View</button><button class="action-btn">Delete</button></td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td><strong>Condo 1BR, City Centre</strong><br><span style="color:#999;font-size:10px;">Amphoe Mueang</span></td>
+            <td>Condo</td>
+            <td>1,500,000</td>
+            <td>David L.</td>
+            <td><span class="status-badge s-sold">SOLD</span></td>
+            <td style="color:#888;font-size:11px;">01 May 2025</td>
+            <td><button class="action-btn">Edit</button><button class="action-btn">View</button><button class="action-btn">Delete</button></td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td><strong>Luxury Villa 5BR Pool</strong><br><span style="color:#999;font-size:10px;">Amphoe Phon Phisai area</span></td>
+            <td>Luxury</td>
+            <td>25,000,000</td>
+            <td>Malee S.</td>
+            <td><span class="status-badge s-pend">PENDING</span></td>
+            <td style="color:#888;font-size:11px;">28 Apr 2025</td>
+            <td><button class="action-btn">Edit</button><button class="action-btn">View</button><button class="action-btn">Delete</button></td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td><strong>2BR House, Kut Chap</strong><br><span style="color:#999;font-size:10px;">Amphoe Kut Chap</span></td>
+            <td>House</td>
+            <td>1,850,000</td>
+            <td>Somchai J.</td>
+            <td><span class="status-badge s-sale">FOR SALE</span></td>
+            <td style="color:#888;font-size:11px;">15 Apr 2025</td>
+            <td><button class="action-btn">Edit</button><button class="action-btn">View</button><button class="action-btn">Delete</button></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="pagination">
+        <span style="color:#888;font-size:11px;">Showing 1–6 of 128</span>
+        <button class="pg-btn">Prev</button>
+        <button class="pg-btn active">1</button>
+        <button class="pg-btn">2</button>
+        <button class="pg-btn">3</button>
+        <span style="color:#aaa;">...</span>
+        <button class="pg-btn">22</button>
+        <button class="pg-btn">Next</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     VIEW 4: ADD LISTING FORM
+══════════════════════════════════════ -->
+<div class="view" id="view-admin-add">
+<div class="admin-frame">
+  <div class="admin-sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-name">REAL E GURUS</div>
+      <div class="brand-sub">Admin Panel</div>
+      <div class="brand-badge">Listing Manager</div>
+    </div>
+    <div class="sidebar-nav">
+      <div class="snav-item"><span class="sicon"></span> Dashboard</div>
+      <div class="snav-item active"><span class="sicon"></span> Listings</div>
+      <div class="snav-item"><span class="sicon"></span> Users</div>
+    </div>
+  </div>
+  <div class="admin-main">
+    <div class="admin-topbar">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="color:#aaa;font-size:13px;cursor:pointer;">Listings</span>
+        <span style="color:#ddd;">/</span>
+        <div class="page-title">Add New Listing</div>
+      </div>
+      <div class="topbar-right">
+        <button class="btn-ghost" style="font-size:11px;padding:5px 12px;">Save as Draft</button>
+        <button class="btn-secondary" style="font-size:11px;padding:5px 12px;">Preview</button>
+      </div>
+    </div>
+    <div class="admin-content">
+
+      <div class="form-tabs">
+        <div class="ftab active">1. Basic Info</div>
+        <div class="ftab">2. Details &amp; Features</div>
+        <div class="ftab">3. Photos &amp; Media</div>
+        <div class="ftab">4. Location</div>
+        <div class="ftab">5. SEO</div>
+      </div>
+
+      <!-- TAB 1 CONTENT -->
+      <div style="background:#f9f9f9;border:1px solid #eee;padding:16px;margin-bottom:20px;">
+        <div style="font-size:11px;font-weight:700;color:#888;margin-bottom:14px;text-transform:uppercase;letter-spacing:1px;">Tab 1 — Basic Info</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Listing Title (English)</label>
+            <input type="text" placeholder="e.g. 3-Bedroom House in Warin Chamrap">
+          </div>
+          <div class="form-group">
+            <label>Listing Title (ภาษาไทย)</label>
+            <input type="text" placeholder="ชื่อประกาศภาษาไทย">
+          </div>
+          <div class="form-group">
+            <label>Listing Status</label>
+            <select><option>For Sale</option><option>For Rent</option><option>Sold</option><option>Pending / Draft</option></select>
+          </div>
+          <div class="form-group">
+            <label>Property Type</label>
+            <select><option>House</option><option>Land</option><option>Luxury</option><option>Condo</option><option>Commercial</option></select>
+          </div>
+          <div class="form-group">
+            <label>Price (฿)</label>
+            <input type="text" placeholder="e.g. 3200000">
+          </div>
+          <div class="form-group">
+            <label>Price Period (for rentals)</label>
+            <select><option>N/A (sale)</option><option>Per Month</option><option>Per Year</option></select>
+          </div>
+          <div class="form-group">
+            <label>Assigned Agent</label>
+            <select><option>Somchai Jaidee</option><option>Malee Sripan</option><option>David Lee</option></select>
+          </div>
+          <div class="form-group">
+            <label>Date Listed</label>
+            <input type="text" placeholder="DD / MM / YYYY">
+          </div>
+          <div class="form-group" style="display:flex;flex-direction:row;align-items:center;gap:16px;padding-top:20px;">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox" checked> &nbsp;Featured on Homepage</label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox" checked> &nbsp;Published (Live)</label>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:#f9f9f9;border:1px solid #eee;padding:16px;margin-bottom:20px;">
+        <div style="font-size:11px;font-weight:700;color:#888;margin-bottom:14px;text-transform:uppercase;letter-spacing:1px;">Tab 3 — Photos &amp; Media (preview)</div>
+        <div class="photo-drop">
+          Drag &amp; drop photos here, or click to upload<br>
+          <span style="font-size:10px;color:#bbb;">JPG / PNG · Max 5MB each · First image = Cover Photo</span>
+        </div>
+        <div class="photo-thumbs">
+          <div class="photo-thumb">Cover</div>
+          <div class="photo-thumb">Photo 2</div>
+          <div class="photo-thumb">Photo 3</div>
+          <div class="photo-thumb" style="border-style:dashed;background:#f0f0f0;color:#ccc;">+ Add</div>
+        </div>
+        <div class="form-group" style="margin-top:14px;">
+          <label>YouTube Video Tour URL</label>
+          <input type="text" placeholder="https://youtube.com/watch?v=...">
+        </div>
+      </div>
+
+      <div style="background:#f9f9f9;border:1px solid #eee;padding:16px;margin-bottom:20px;">
+        <div style="font-size:11px;font-weight:700;color:#888;margin-bottom:14px;text-transform:uppercase;letter-spacing:1px;">Tab 4 — Location (preview)</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Address (English)</label>
+            <input type="text" placeholder="Street address or area description">
+          </div>
+          <div class="form-group">
+            <label>ที่อยู่ (ภาษาไทย)</label>
+            <input type="text" placeholder="ที่อยู่ภาษาไทย">
+          </div>
+          <div class="form-group">
+            <label>Sub-district (Tambon)</label>
+            <input type="text" placeholder="">
+          </div>
+          <div class="form-group">
+            <label>District (Amphoe)</label>
+            <input type="text" placeholder="">
+          </div>
+          <div class="form-group full">
+            <label>Google Maps Pin (drag to set location)</label>
+            <div class="map-placeholder">[ Interactive Google Map — drag pin to set exact location ]</div>
+          </div>
+          <div class="form-group" style="flex-direction:row;align-items:center;gap:8px;">
+            <input type="checkbox"> &nbsp;<label style="font-weight:400;">Show exact address on public listing</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn-primary">Publish Listing</button>
+        <button class="btn-secondary">Save as Draft</button>
+        <button class="btn-ghost">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     VIEW 5: USERS & ROLES
+══════════════════════════════════════ -->
+<div class="view" id="view-admin-users">
+<div class="admin-frame">
+  <div class="admin-sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-name">REAL E GURUS</div>
+      <div class="brand-sub">Admin Panel</div>
+      <div class="brand-badge">Super Admin</div>
+    </div>
+    <div class="sidebar-nav">
+      <div class="snav-item"><span class="sicon"></span> Dashboard</div>
+      <div class="snav-item"><span class="sicon"></span> Listings</div>
+      <div class="snav-item active"><span class="sicon"></span> Users &amp; Roles</div>
+    </div>
+  </div>
+  <div class="admin-main">
+    <div class="admin-topbar">
+      <div class="page-title">Users &amp; Role Management</div>
+      <div class="topbar-right">
+        <div class="notif-dot">Alerts<span class="notif-badge">3</span></div>
+        <span>John Smith</span>
+        <span style="border:1px solid #ddd;padding:4px 10px;cursor:pointer;font-size:11px;">Logout</span>
+      </div>
+    </div>
+    <div class="admin-content">
+
+      <div class="page-header">
+        <h2>All Users (312)</h2>
+        <button class="btn-primary" style="font-size:12px;padding:8px 16px;">+ Add New User</button>
+      </div>
+
+      <div style="font-size:11px;color:#888;margin-bottom:8px;font-weight:700;text-transform:uppercase;letter-spacing:1px;">Role Legend</div>
+      <div class="role-legend">
+        <div class="role-pill r-super">Super Admin</div>
+        <div class="role-pill r-mgr">Listing Manager</div>
+        <div class="role-pill r-agent">Agent</div>
+        <div class="role-pill r-editor">Editor</div>
+        <div class="role-pill r-customer">Customer</div>
+      </div>
+
+      <div class="filter-bar">
+        <input type="text" placeholder="Search by name or email...">
+        <select class="flt-select"><option>All Roles</option><option>Super Admin</option><option>Listing Manager</option><option>Agent</option><option>Editor</option><option>Customer</option></select>
+        <select class="flt-select"><option>All Status</option><option>Active</option><option>Suspended</option></select>
+      </div>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th style="width:30px;"><input type="checkbox"></th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>LINE ID</th>
+            <th>Status</th>
+            <th>Joined</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td><strong>John Smith</strong></td>
+            <td style="color:#555;">john@realegurus.com</td>
+            <td><span class="role-pill r-super" style="font-size:10px;padding:2px 8px;">Super Admin</span></td>
+            <td style="color:#888;font-size:11px;">@johnsmith</td>
+            <td><span style="font-size:10px;color:#111;font-weight:700;">Active</span></td>
+            <td style="color:#888;font-size:11px;">Jan 2014</td>
+            <td><button class="action-btn">Edit</button><button class="action-btn">Access</button></td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td><strong>Somchai Jaidee</strong></td>
+            <td style="color:#555;">somchai@realegurus.com</td>
+            <td><span class="role-pill r-agent" style="font-size:10px;padding:2px 8px;">Agent</span></td>
+            <td style="color:#888;font-size:11px;">@somchai_ub</td>
+            <td><span style="font-size:10px;color:#111;font-weight:700;">Active</span></td>
+            <td style="color:#888;font-size:11px;">Mar 2018</td>
+            <td><button class="action-btn">Edit</button><button class="action-btn">Access</button><button class="action-btn">Delete</button></td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td><strong>Sarah Connor</strong></td>
+            <td style="color:#555;">sarah@realegurus.com</td>
+            <td><span class="role-pill r-editor" style="font-size:10px;padding:2px 8px;">Editor</span></td>
+            <td style="color:#888;font-size:11px;">@sarah_re</td>
+            <td><span style="font-size:10px;color:#111;font-weight:700;">Active</span></td>
+            <td style="color:#888;font-size:11px;">Jun 2021</td>
+            <td><button class="action-btn">Edit</button><button class="action-btn">Access</button><button class="action-btn">Delete</button></td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td><strong>Malee Sripan</strong></td>
+            <td style="color:#555;">malee@realegurus.com</td>
+            <td><span class="role-pill r-agent" style="font-size:10px;padding:2px 8px;">Agent</span></td>
+            <td style="color:#888;font-size:11px;">@maleeub</td>
+            <td><span style="font-size:10px;color:#111;font-weight:700;">Active</span></td>
+            <td style="color:#888;font-size:11px;">Aug 2020</td>
+            <td><button class="action-btn">Edit</button><button class="action-btn">Access</button><button class="action-btn">Delete</button></td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td><strong>David Lee</strong></td>
+            <td style="color:#555;">david@gmail.com</td>
+            <td><span class="role-pill r-customer" style="font-size:10px;padding:2px 8px;">Customer</span></td>
+            <td style="color:#aaa;font-size:11px;">—</td>
+            <td><span style="font-size:10px;color:#999;">Suspended</span></td>
+            <td style="color:#888;font-size:11px;">Feb 2024</td>
+            <td><button class="action-btn">Edit</button><button class="action-btn">Access</button><button class="action-btn">Delete</button></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- PERMISSIONS MATRIX -->
+      <div style="margin-top:28px;">
+        <div style="font-size:13px;font-weight:800;margin-bottom:12px;">Permissions Matrix</div>
+        <table class="permissions-table">
+          <thead>
+            <tr>
+              <th style="width:200px;text-align:left;">Permission</th>
+              <th>Super Admin</th>
+              <th>Listing Mgr</th>
+              <th>Agent</th>
+              <th>Editor</th>
+              <th>Customer</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>View Dashboard</td><td class="perm-yes">Yes</td><td class="perm-yes">Yes</td><td class="perm-yes">Yes</td><td class="perm-yes">Yes</td><td class="perm-no">—</td></tr>
+            <tr><td>Add / Edit Any Listing</td><td class="perm-yes">Yes</td><td class="perm-yes">Yes</td><td class="perm-no">—</td><td class="perm-no">—</td><td class="perm-no">—</td></tr>
+            <tr><td>Add / Edit Own Listings</td><td class="perm-yes">Yes</td><td class="perm-yes">Yes</td><td class="perm-yes">Yes</td><td class="perm-no">—</td><td class="perm-no">—</td></tr>
+            <tr><td>Delete Listings</td><td class="perm-yes">Yes</td><td class="perm-yes">Yes</td><td class="perm-no">—</td><td class="perm-no">—</td><td class="perm-no">—</td></tr>
+            <tr><td>Change Listing Status</td><td class="perm-yes">Yes</td><td class="perm-yes">Yes</td><td class="perm-no">—</td><td class="perm-no">—</td><td class="perm-no">—</td></tr>
+            <tr><td>Manage News &amp; Resources</td><td class="perm-yes">Yes</td><td class="perm-no">—</td><td class="perm-no">—</td><td class="perm-yes">Yes</td><td class="perm-no">—</td></tr>
+            <tr><td>Manage All Users</td><td class="perm-yes">Yes</td><td class="perm-no">—</td><td class="perm-no">—</td><td class="perm-no">—</td><td class="perm-no">—</td></tr>
+            <tr><td>View All Leads</td><td class="perm-yes">Yes</td><td class="perm-yes">Yes</td><td class="perm-no">—</td><td class="perm-no">—</td><td class="perm-no">—</td></tr>
+            <tr><td>View Own Leads</td><td class="perm-yes">Yes</td><td class="perm-yes">Yes</td><td class="perm-yes">Yes</td><td class="perm-no">—</td><td class="perm-no">—</td></tr>
+            <tr><td>Manage Site Settings</td><td class="perm-yes">Yes</td><td class="perm-no">—</td><td class="perm-no">—</td><td class="perm-no">—</td><td class="perm-no">—</td></tr>
+            <tr><td>Save Favourites</td><td class="perm-yes">Yes</td><td class="perm-yes">Yes</td><td class="perm-yes">Yes</td><td class="perm-yes">Yes</td><td class="perm-yes">Yes</td></tr>
+            <tr><td>Submit Enquiry / Lead</td><td class="perm-yes">Yes</td><td class="perm-yes">Yes</td><td class="perm-yes">Yes</td><td class="perm-yes">Yes</td><td class="perm-yes">Yes</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pagination" style="margin-top:14px;">
+        <span style="color:#888;font-size:11px;">Showing 1–5 of 312</span>
+        <button class="pg-btn">Prev</button>
+        <button class="pg-btn active">1</button>
+        <button class="pg-btn">2</button>
+        <button class="pg-btn">3</button>
+        <span style="color:#aaa;">...</span>
+        <button class="pg-btn">63</button>
+        <button class="pg-btn">Next</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+</div>
+
+
+<script>
+function showView(id) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.vsw-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('view-' + id).classList.add('active');
+  
+  const btns = document.querySelectorAll('.vsw-btn');
+  // Updated map to match the new View Switcher button index
+  const map = {
+    'home': 0,
+    'buy': 1,
+    'sold': 2,
+    'commercial': 3,
+    'detail': 4,
+    'about': 5,
+    'contact': 6,
+    'admin-dash': 7,
+    'admin-listings': 8,
+    'admin-add': 9,
+    'admin-users': 10
+  };
+  
+  if (btns[map[id]]) {
+    btns[map[id]].classList.add('active');
+  }
+  
+  window.scrollTo(0,0);
+}
+
+// Search tab switcher in Hero
+document.querySelectorAll('.stab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.stab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+  });
+});
+
+// Form tabs
+document.querySelectorAll('.ftab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.ftab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>
